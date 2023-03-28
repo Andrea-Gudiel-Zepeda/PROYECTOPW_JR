@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using JR_API.Models;
+using Microsoft.AspNetCore.Mvc;
 
 namespace JR_API.Controllers
 {
@@ -6,10 +7,24 @@ namespace JR_API.Controllers
     [Route("[controller]")]
     public class StatusController : ControllerBase
     {
+        private readonly JrDbContext _context;
+
+        public StatusController()
+        {
+            _context = new JrDbContext();
+        }
+
+        //OBTENER STATUS
         [HttpGet(Name = "GetStatus")]
         public string Get()
         {
             return "Hola";
         }
+
+        //CREAR STATUS
+
+        //EDITAR STATUS
+
+        //ELIMINAR STATUS 
     }
 }

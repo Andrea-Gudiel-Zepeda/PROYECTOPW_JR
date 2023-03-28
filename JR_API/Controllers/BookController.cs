@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using JR_API.Models;
+using Microsoft.AspNetCore.Mvc;
 
 namespace JR_API.Controllers
 {
@@ -6,10 +7,24 @@ namespace JR_API.Controllers
     [Route("[controller]")]
     public class BookController : ControllerBase
     {
+        private readonly JrDbContext _context;
+
+        public BookController()
+        {
+            _context = new JrDbContext();
+        }
+
+        //OBTENER LIBROS POR USUARIO 
         [HttpGet(Name = "GetBook")]
         public string Get()
         {
             return "Hola Libros";
         }
+
+        //CREAR LIBRO
+
+        //EDITAR LIBRO 
+
+        //ELIMINAR LIBRO
     }
 }
