@@ -5,11 +5,11 @@ using System.Diagnostics;
 
 namespace JR_MVC.Controllers
 {
-    public class JRController : Controller
+    public class UserController : Controller
     {
-        private readonly ILogger<JRController> _logger;
+        private readonly ILogger<UserController> _logger;
 
-        public JRController(ILogger<JRController> logger)
+        public UserController(ILogger<UserController> logger)
         {
             _logger = logger;
         }
