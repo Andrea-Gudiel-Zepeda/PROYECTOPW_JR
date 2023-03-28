@@ -1,0 +1,109 @@
+﻿
+@{
+    ViewData["Title"] = "SingIn";
+    Layout = "";
+}
+
+<!doctype html>
+<html lang="en" dir="ltr">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Reading Journal</title>
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="../../assets/images/logoRJ.ico" />
+    <link rel="stylesheet" href="../../assets/css/libs.min.css">
+    <link rel="stylesheet" href="../../assets/css/RJ.css">
+</head>
+
+<body class=" " data-bs-spy="scroll" data-bs-target="#elements-section" data-bs-offset="0" tabindex="0">
+    <!-- loader Start -->
+    <div id="loading">
+        <div class="loader simple-loader">
+            <div class="loader-body"></div>
+        </div>
+    </div>
+    <!-- loader END -->
+
+    <div class="wrapper">
+        <section class="login-content">
+            <div class="row m-0 align-items-center bg-white vh-100">
+                <div class="col-md-6">
+                    <div class="row justify-content-center">
+                        <div class="col-md-10">
+                            <div class="card card-transparent shadow-none d-flex justify-content-center mb-0 auth-card">
+                                <div class="card-body">
+                                    <a href="../../dashboard proyecto/index.html" class="navbar-brand d-flex align-items-center mb-3">
+                                        <!--Logo start-->
+                                        <img src="../../assets/images/logoRJ.svg" class="sidebar-color-logo  ">
+                                        <!--logo End-->
+                                        <h3 class="logo-title ms-2 text-primary">Reading Journal</h3>
+                                    </a>
+                                    <h2 class="mb-2 text-center">Sign In</h2>
+                                    <p class="text-center">Login to stay connected.</p>
+                                    <form asp-action="SingIn">
+                                        <div class="row">
+                                            <div class="col-lg-12">
+                                                <div class="form-group">
+                                                    <label for="email" class="form-label">Email</label>
+                                                    <input type="email" class="form-control" id="email" aria-describedby="email" placeholder=" ">
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-12">
+                                                <div class="form-group">
+                                                    <label for="password" class="form-label">Password</label>
+                                                    <input type="password" class="form-control" id="password" aria-describedby="password" placeholder=" ">
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-12 d-flex justify-content-between">
+                                                <div class="form-check mb-3">
+                                                    <input type="checkbox" class="form-check-input" id="customCheck1">
+                                                    <label class="form-check-label" for="customCheck1">Remember Me</label>
+                                                </div>
+                                                <a href="/JR/Recoverpw">Forgot Password?</a>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex justify-content-center">
+                                            @using (Html.BeginForm("Pagina_Principal", "JR", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                                            {
+                                                <button type="submit" class="btn btn-primary">Sign In</button>
+                                            }
+                                        </div>
+                                        <p class="mt-3 text-center">
+                                            Don’t have an account? @Html.ActionLink("Clic here to Sing Up", "SingUp", new { /* id=item.PrimaryKey */ })
+                                        </p>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 d-flex d-md-block d-none  justify-content-center bg-soft-secondary p-0 mt-n1 vh-100">
+                    <img src="../../assets/images/auth/09.jpeg" class="img-fluid" alt="images">
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Backend Bundle JavaScript -->
+    <script src="../../assets/js/libs.min.js"></script>
+    <!-- widgetchart JavaScript -->
+    <script src="../../assets/js/charts/widgetcharts.js"></script>
+    <!-- mapchart JavaScript -->
+    <script src="../../assets/js/charts/vectore-chart.js"></script>
+    <script src="../../assets/js/charts/dashboard.js"></script>
+    <!-- fslightbox JavaScript -->
+    <script src="../../assets/js/fslightbox.js"></script>
+    <!-- settings JavaScript -->
+    <script src="../../assets/js/setting.js"></script>
+    <!-- Form Wizard Script -->
+    <script src="../../assets/js/form-wizard.js"></script>
+    <!-- app JavaScript -->
+    <script src="../../assets/js/app.js"></script>
+
+</body>
+
+</html>
+

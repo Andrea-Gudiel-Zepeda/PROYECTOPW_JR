@@ -1,0 +1,61 @@
+﻿@model Reading_Journal.Models.Book
+@{
+    ViewData["Title"] = "CreateBook";
+}
+
+
+<body class=" " data-bs-spy="scroll" data-bs-target="#elements-section" data-bs-offset="0" tabindex="0">
+
+    <section class="section">
+        <div class="row">
+            <div class="col-lg-12">
+
+                <div class="card">
+                    <div class="header-title">
+                        <h4 class="card-title">Agregar Libro</h4>
+                    </div>
+                    <div class="card-body">
+                        <form asp-action="CreateBook_Read">
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                            <div class="row">
+                                <div class="col-md-6 col-lg-6 col-sm-12">
+                                    <label asp-for="NameBook" class="control-label">Nombre de Libro</label>
+                                    <input asp-for="NameBook" class="form-control" />
+                                    <span asp-validation-for="NameBook" class="text-danger"></span>
+                                </div>
+                                <div class="col-md-6 col-lg-6 col-sm-12">
+                                    <label for="">Nombre del autor</label>
+                                    <input type="text" class="form-control" name="NombreAutor">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 col-lg-6 col-sm-12">
+                                    <label for="">Año de publicación</label>
+                                    <input type="text" class="form-control" name="publicacion">
+                                </div>
+                                <div class="col-md-6 col-lg-6 col-sm-12">
+                                    <label for="">Fecha Leído</label>
+                                    <input type="date" class="form-control" name="FechaLeido">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 col-lg-6 col-sm-12">
+                                    <label for="">Calificacion</label>
+                                    <input type="number" max="10" class="form-control" name="Calificacion">
+                                </div>
+                                <div class="col-md-6 col-lg-6 col-sm-12">
+                                    <label for="">Picture</label>
+                                    <input type="text" class="form-control" name="Picture">
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-center">
+                                   <button type="submit" class="btn btn-primary">Agregar</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</body>
