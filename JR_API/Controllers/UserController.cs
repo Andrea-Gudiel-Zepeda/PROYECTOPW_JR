@@ -33,7 +33,7 @@ namespace JR_API.Controllers
                                                             Email= u.Email,
                                                             NumberPhone= u.NumberPhone
 
-                                                        }).OrderBy(s => s.FullName).ToListAsync();
+                                                        }).OrderBy(s => s.Email).ToListAsync();
 
             return usuario;
         }
@@ -106,7 +106,6 @@ namespace JR_API.Controllers
             {
                 Models.User newUser = new Models.User
                 {
-                    IdUser = user.IdUser,
                     FullName = user.FullName,
                     LastName = user.LastName,
                     Email = user.Email,
