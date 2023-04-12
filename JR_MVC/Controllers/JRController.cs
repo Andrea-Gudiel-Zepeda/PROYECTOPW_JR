@@ -20,39 +20,7 @@ namespace JR_MVC.Controllers
             return View();
         }
 
-        [HttpPost]
-        public IActionResult Pagina_Principal(IFormCollection collection)
-        {
-            return View();
-        }
-
-        [HttpGet]
-        public IActionResult SingIn()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        public IActionResult SingIn(IFormCollection collection)
-        {
-            ViewBag.Id = "1";
-            return View();
-        }
-
-        [HttpGet]
-        public IActionResult SingUp()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        public IActionResult SingUp(IFormCollection collection)
-        {
-               
-            return View();
-        }
-
-
+    
         public IActionResult Recoverpw()
         {
             return View();

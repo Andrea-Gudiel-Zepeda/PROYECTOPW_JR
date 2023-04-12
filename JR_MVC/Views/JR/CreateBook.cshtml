@@ -1,8 +1,5 @@
-﻿@model Reading_Journal.Models.Book
+﻿@model JR_MVC.Models.Book
 
-@{
-    ViewData["Title"] = "CreateBook";
-}
 
 <h1>CreateBook</h1>
 
@@ -21,9 +18,9 @@
                 <span asp-validation-for="AuthorBook" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="YearBookPublish" class="control-label"></label>
-                <input asp-for="YearBookPublish" class="form-control" />
-                <span asp-validation-for="YearBookPublish" class="text-danger"></span>
+                <label asp-for="BookPublish" class="control-label"></label>
+                <input asp-for="BookPublish" class="form-control" />
+                <span asp-validation-for="BookPublish" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="DateBook" class="control-label"></label>

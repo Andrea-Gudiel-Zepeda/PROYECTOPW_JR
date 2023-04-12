@@ -1,4 +1,5 @@
-﻿
+﻿@model JR_MVC.Models.User
+
 @{
     ViewData["Title"] = "SingUp";
     Layout = "";
@@ -45,49 +46,50 @@
                                     <h2 class="mb-2 text-center">Sign Up</h2>
                                     <p class="text-center">Create your Reading Journal account.</p>
                                     <form asp-action="SingUp">
-                                       @using (Html.BeginForm("SingUp", "JR", FormMethod.Post))
+                                       @using (Html.BeginForm("SingUp", "User", FormMethod.Post))
                                        {
                                         <div class="row">
                                             <div class="col-lg-6">
                                                 <div class="form-group">
-                                                    <label for="full-name" class="form-label">Full Name</label>
-                                                    <input type="text" class="form-control" id="full-name" placeholder=" ">
+                                                   <label asp-for="FullName" class="control-label"></label>
+                                                   <input asp-for="FullName" class="form-control" />
+                                                   <span asp-validation-for="FullName" class="text-danger"></span>
                                                 </div>
                                             </div>
                                             <div class="col-lg-6">
                                                 <div class="form-group">
-                                                    <label for="last-name" class="form-label">Last Name</label>
-                                                    <input type="text" class="form-control" id="last-name" placeholder=" ">
+                                                    <label asp-for="LastName" class="control-label"></label>
+                                                    <input asp-for="LastName" class="form-control" />
+                                                    <span asp-validation-for="LastName" class="text-danger"></span>
                                                 </div>
                                             </div>
                                             <div class="col-lg-6">
                                                 <div class="form-group">
-                                                    <label for="email" class="form-label">Email</label>
-                                                    <input type="email" class="form-control" id="email" placeholder=" ">
+                                                    <label asp-for="Email" class="control-label"></label>
+                                                    <input asp-for="Email" type="email" class="form-control"/>
+                                                    <span asp-validation-for="Email" class="text-danger"></span>
                                                 </div>
                                             </div>
                                             <div class="col-lg-6">
                                                 <div class="form-group">
-                                                    <label for="phone" class="form-label">Phone No.</label>
-                                                    <input type="text" class="form-control" id="phone" placeholder=" ">
+                                                    <label asp-for="NumberPhone" class="control-label"></label>
+                                                    <input asp-for="NumberPhone" class="form-control" />
+                                                    <span asp-validation-for="NumberPhone" class="text-danger"></span>
                                                 </div>
                                             </div>
                                             <div class="col-lg-12">
                                                 <div class="form-group">
-                                                    <label for="password" class="form-label">Password</label>
-                                                    <input type="password" class="form-control" id="password" placeholder=" ">
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-12 d-flex justify-content-center">
-                                                <div class="form-check mb-3">
-                                                    <input type="checkbox" class="form-check-input" id="customCheck1">
-                                                    <label class="form-check-label" for="customCheck1">I agree with the terms of use</label>
+                                                    <label asp-for="Password" class="control-label"></label>
+                                                    <input asp-for="Password" type="password" class="form-control" />
+                                                    <span asp-validation-for="Password" class="text-danger"></span>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="d-flex justify-content-center">
-                                                <button type="submit" class="btn btn-primary">Sign Up</button>
-                                           
+                                                @using (Html.BeginForm("SingUp", "User", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                                                {
+                                                    <button type="submit" class="btn btn-primary">Sign Up</button>
+                                                }
                                         </div>
                                        }
                                         <p class="mt-3 text-center">
