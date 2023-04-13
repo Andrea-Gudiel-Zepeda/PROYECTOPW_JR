@@ -22,6 +22,6 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=JR}/{action=SingIn}/{id?}");
+    pattern: "{controller=User}/{action=SingIn}/{id?}");
 
 app.Run();

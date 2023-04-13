@@ -20,16 +20,7 @@ namespace JR_MVC.Controllers
             return View();
         }
 
-    
-        public IActionResult Recoverpw()
-        {
-            return View();
-        }
-
-        public IActionResult User_Profile()
-        {
-            return View();
-        }
+       
 
         public IActionResult error404()
         {
