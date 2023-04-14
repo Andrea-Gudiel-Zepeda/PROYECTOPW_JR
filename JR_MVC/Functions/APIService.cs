@@ -8,7 +8,7 @@ namespace JR_MVC.Functions
     public class APIService
     {
         private static int timeout = 30;
-        private static string baseurl = "https://localhost:7067/";
+        private static string baseurl = "https://localhost:7114/";
 
         //METODOS PARA EL CRUD - GENERALES
         public static async Task<System.Net.Http.HttpResponseMessage> GetListMethod(string url)
@@ -95,12 +95,12 @@ namespace JR_MVC.Functions
             }
         }
 
-        public static async System.Threading.Tasks.Task<JR_DB.User> GetUserByID(int id)
+        public static async System.Threading.Tasks.Task<bool> GetUserByID(int id)
         {
             var response = await GetByIDMethod("User/GetByID", id);
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
-                return JsonConvert.DeserializeObject<JR_DB.User>(await response.Content.ReadAsStringAsync());
+                return JsonConvert.DeserializeObject<bool>(await response.Content.ReadAsStringAsync());
             }
             else
             {

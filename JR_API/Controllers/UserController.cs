@@ -31,7 +31,8 @@ namespace JR_API.Controllers
                                                             FullName= u.FullName,
                                                             LastName = u.LastName,
                                                             Email= u.Email,
-                                                            NumberPhone= u.NumberPhone
+                                                            NumberPhone= u.NumberPhone,
+                                                            Password = u.Password
 
                                                         }).OrderBy(s => s.Email).ToListAsync();
 
