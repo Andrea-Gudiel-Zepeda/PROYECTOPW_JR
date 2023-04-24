@@ -4,19 +4,21 @@ using System;
 using System.Collections;
 using System.Diagnostics;
 using JR_MVC.Functions;
+using Blazored.LocalStorage;
 
 namespace JR_MVC.Controllers
 {
     public class UserController : Controller
     {
         private readonly ILogger<UserController> _logger;
+      
 
         public UserController(ILogger<UserController> logger)
         {
             _logger = logger;
         }
 
-        static int idUser;
+        
 
         //Muestra la página para iniciar sesión
         [HttpGet]
@@ -31,7 +33,7 @@ namespace JR_MVC.Controllers
         {
             bool contraseñaIncorrecta = true;
             bool emailIncorrecto = true;
-
+            
             IEnumerable<JR_DB.User> usuario = await Functions.APIService.UserGetList();
 
             foreach (var us in usuario)
@@ -42,7 +44,7 @@ namespace JR_MVC.Controllers
                     {
                         contraseñaIncorrecta = false;
                         emailIncorrecto = false;
-                        idUser = us.IdUser;
+                        ViewBag.idUser = us.IdUser;
                         break;
                     }
                     else
@@ -57,6 +59,7 @@ namespace JR_MVC.Controllers
                 }
             }
 
+          
             if (!emailIncorrecto)
             {
                 if (!contraseñaIncorrecta)
@@ -110,7 +113,10 @@ namespace JR_MVC.Controllers
         public async Task<IActionResult> Recoverpw(IFormCollection collection)
         {
             string email = collection["Email"];
+            string newPassword = collection["Password"];
             bool emailCorrecto = false;
+            int IdUser = 0;
+            JR_DB.User NewUser = new JR_DB.User();
 
             IEnumerable<JR_DB.User> usuario = await Functions.APIService.UserGetList();
 
@@ -119,7 +125,8 @@ namespace JR_MVC.Controllers
                 if (us.Email == email)
                 {
                    emailCorrecto = true;
-                   idUser = us.IdUser;
+                   IdUser = us.IdUser;
+                   NewUser = us;
                    break;
                 }
                 else
@@ -130,7 +137,8 @@ namespace JR_MVC.Controllers
 
             if (emailCorrecto)
             {
-                return RedirectToAction(nameof(Recoverpw2));
+                //cambiar la contraseña
+                return RedirectToAction(nameof(SingIn));
             }
             else
             {
@@ -139,23 +147,6 @@ namespace JR_MVC.Controllers
 
             return View();
             
-        }
-
-        //Muestra la segunda página para cambiar contraseña
-        [HttpGet]
-        public IActionResult Recoverpw2()
-        {
-            return View();
-        }
-
-        //Solicita la nueva contraseña
-        [HttpPost]
-        public IActionResult Recoverpw2(IFormCollection collection)
-        {
-            string newPassword = collection["Password"];
-            int id = idUser;
-            //Falta hacer el update y el mensaje
-            return RedirectToAction(nameof(SingIn));
         }
 
         //Muestra el perfil de usuario 

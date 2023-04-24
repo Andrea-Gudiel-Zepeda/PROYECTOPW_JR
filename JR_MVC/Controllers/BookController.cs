@@ -1,7 +1,10 @@
 ﻿using JR_MVC.Models;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections;
 using System.Diagnostics;
+using System.IO;
+
 
 namespace JR_MVC.Controllers
 {
@@ -13,101 +16,208 @@ namespace JR_MVC.Controllers
         {
             _logger = logger;
         }
+        public static int IdUser = 0;
 
         [HttpGet]
-        public IActionResult Pagina_Principal()
+        public async Task<IActionResult> ValidacionCredencialesL()
         {
             return View();
         }
 
         [HttpPost]
-        public IActionResult Pagina_Principal(IFormCollection collection)
+        public async Task<IActionResult> ValidacionCredencialesL(string email, string password)
         {
-            return View();
-        }
-
-        [HttpGet]
-        public IActionResult SingIn()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        public IActionResult SingIn(IFormCollection collection)
-        {
-            ViewBag.Id = "1";
-            return View();
-        }
-
-        [HttpGet]
-        public IActionResult SingUp()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        public IActionResult SingUp(IFormCollection collection)
-        {
-               
-            return View();
-        }
-
-
-        public IActionResult Recoverpw()
-        {
-            return View();
-        }
-
-        public IActionResult User_Profile()
-        {
-            return View();
-        }
-
-        public IActionResult error404()
-        {
-            return View();
-        }
-
-        public IActionResult AcercaDe()
-        {
-            return View();
-        }
-
-        public IActionResult Read_List()
-        {
-            return View();
-        }
-
-        public IActionResult Buy_List()
-        {
-            return View();
-        }
-
-        public IActionResult ToDo_List()
-        {
-            return View();
-        }
-
-        public IActionResult CreateBook_Read()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        public IActionResult CreateBook_Read(IFormCollection collection)
-        {
-            int id = Convert.ToInt32(ViewBag.Id);
-            JrDbContext _jrContext = new JrDbContext();
-            JR_MVC.Models.Book book = new JR_MVC.Models.Book
+            IEnumerable<JR_DB.User> usuario = await Functions.APIService.UserGetList();
+            bool encontrado = false;
+            foreach (var us in usuario)
             {
-                IdBook = 0,
-                NameBook = collection["NombreLibro"],
-                AuthorBook = collection["NombreAutor"],
-                //BookPublish = collection["publicacion"],
-                DateBook = Convert.ToDateTime(collection["FechaLeido"]),
-                IdCategorie = 1,
-                IdUser = id
-            };
+                if (us.Email == email)
+                {
+                    if (us.Password == password)
+                    {
+                        IdUser = us.IdUser;
+                        encontrado = true;
+                        break;
+                    }
+                    else
+                    {
+                        ViewBag.error = "La contraseña es incorrecta, ingrese de nuevo";
+                        return View();
+                    }
+                }
+                else
+                {
+                    ViewBag.error = "No se encontro el usuario, intente de nuevo para poder continuar";
+                    return View();
+                }
+            }
+
+            if (encontrado)
+            {
+                return RedirectToAction("CreateBook_Read", "Book");
+            }
+
+            return View();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ValidacionCredencialesP()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ValidacionCredencialesP(string email, string password)
+        {
+            IEnumerable<JR_DB.User> usuario = await Functions.APIService.UserGetList();
+            bool encontrado = false;
+            foreach (var us in usuario)
+            {
+                if (us.Email == email)
+                {
+                    if (us.Password == password)
+                    {
+                        IdUser = us.IdUser;
+                        encontrado = true;
+                        break;
+                    }
+                    else
+                    {
+                        ViewBag.error = "La contraseña es incorrecta, ingrese de nuevo";
+                        return View();
+                    }
+                }
+                else
+                {
+                    ViewBag.error = "No se encontro el usuario, intente de nuevo para poder continuar";
+                    return View();
+                }
+            }
+
+            if (encontrado)
+            {
+                return RedirectToAction("CreateBook_ToDo", "Book");
+            }
+
+            return View();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ValidacionCredencialesB()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ValidacionCredencialesB(string email, string password)
+        {
+            IEnumerable<JR_DB.User> usuario = await Functions.APIService.UserGetList();
+            bool encontrado = false;
+            foreach (var us in usuario)
+            {
+                if (us.Email == email)
+                {
+                    if (us.Password == password)
+                    {
+                        IdUser = us.IdUser;
+                        encontrado = true;
+                        break;
+                    }
+                    else
+                    {
+                        ViewBag.error = "La contraseña es incorrecta, ingrese de nuevo";
+                        return View();
+                    }
+                }
+                else
+                {
+                    ViewBag.error = "No se encontro el usuario, intente de nuevo para poder continuar";
+                    return View();
+                }
+            }
+
+            if (encontrado)
+            {
+                return RedirectToAction("CreateBook_Buy", "Book");
+            }
+
+            return View();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Read_List()
+        {
+            IEnumerable<JR_DB.Book> books = await Functions.APIServiceBook.BookGetList();
+            List<JR_DB.Book> books_l = new List<JR_DB.Book>();
+
+            foreach (var bk in books)
+            {
+                if(bk.IdCategorie == 0)
+                {
+                    books_l.Add(bk);
+                }
+            }
+
+            return View(books_l);
+        }
+
+        //obtener libros pendientes
+        [HttpGet]
+        public async Task<IActionResult> ToDo_List()
+        {
+            IEnumerable<JR_DB.Book> books = await Functions.APIServiceBook.BookGetList();
+            List<JR_DB.Book> books_p = new List<JR_DB.Book>();
+
+            foreach (var bk in books)
+            {
+                if (bk.IdCategorie == 2)
+                {
+                    books_p.Add(bk);
+                }
+            }
+
+            return View(books_p);
+        }
+
+        //Obtener listado libros por comprar
+        [HttpGet]
+        public async Task<IActionResult> Buy_List()
+        {
+            IEnumerable<JR_DB.Book> books = await Functions.APIServiceBook.BookGetList();
+            List<JR_DB.Book> books_b = new List<JR_DB.Book>();
+
+            foreach (var bk in books)
+            {
+                if (bk.IdCategorie == 2)
+                {
+                    books_b.Add(bk);
+                }
+            }
+
+            return View(books_b);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> CreateBook_Read()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateBook_Read([Bind("IdBook,NameBook,AuthorBook,BookPublish,DateBook,Calificacion,PictureBook")] Book book, IFormCollection collection)
+        {
+            //validar calificacion
+            //validar imagen
+            string imagen = collection["Imagen"];
+            book.IdCategorie = 0;
+            book.IdUser = IdUser;
+            if (ModelState.IsValid)
+            {
+                await Functions.APIServiceBook.BookSet(book);
+                //falta el mensaje y direccionar 
+                return RedirectToAction(nameof(CreateBook_Read));
+            }
+
 
             //_jrContext.Books.Add(book);
             //_jrContext.SaveChanges();
@@ -120,49 +230,12 @@ namespace JR_MVC.Controllers
             return View();
         }
 
-        [HttpGet]
-        public IActionResult CreateBook()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        public IActionResult CreateBook(Book book)
-        {
-            return View();
-        }
-
         public IActionResult CreateBook_ToDo()
         {
             return View();
         }
 
         public IActionResult UpdateBook()
-        {
-            return View();
-        }
-
-        public IActionResult ZonaReseñas()
-        {
-            return View();
-        }
-
-        public IActionResult CreateReseña()
-        {
-            return View();
-        }
-
-        public IActionResult UpdateReseña()
-        {
-            return View();
-        }
-
-        public IActionResult Terms_Service()
-        {
-            return View();
-        }
-
-        public IActionResult Privacy_Policy()
         {
             return View();
         }

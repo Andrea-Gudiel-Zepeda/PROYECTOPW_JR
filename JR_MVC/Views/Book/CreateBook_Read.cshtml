@@ -20,28 +20,33 @@
                                     <span asp-validation-for="NameBook" class="text-danger"></span>
                                 </div>
                                 <div class="col-md-6 col-lg-6 col-sm-12">
-                                    <label for="">Nombre del autor</label>
-                                    <input type="text" class="form-control" name="NombreAutor">
+                                    <label asp-for="AuthorBook" class="control-label">Nombre de Autor</label>
+                                    <input asp-for="AuthorBook" class="form-control" />
+                                    <span asp-validation-for="AuthorBook" class="text-danger"></span>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-6 col-lg-6 col-sm-12">
-                                    <label for="">Año de publicación</label>
-                                    <input type="text" class="form-control" name="publicacion">
+                                    <label asp-for="BookPublish" class="control-label">Fecha de publicacion</label>
+                                    <input asp-for="BookPublish" class="form-control" />
+                                    <span asp-validation-for="BookPublish" class="text-danger"></span>
                                 </div>
                                 <div class="col-md-6 col-lg-6 col-sm-12">
-                                    <label for="">Fecha Leído</label>
-                                    <input type="date" class="form-control" name="FechaLeido">
+                                    <label asp-for="DateBook" class="control-label">Fecha de leído</label>
+                                    <input asp-for="DateBook" class="form-control" />
+                                    <span asp-validation-for="DateBook" class="text-danger"></span>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-6 col-lg-6 col-sm-12">
-                                    <label for="">Calificacion</label>
-                                    <input type="number" max="10" class="form-control" name="Calificacion">
+                                    <label asp-for="Calificacion" class="control-label">Calificacion</label>
+                                    <input asp-for="Calificacion" class="form-control" />
+                                    <span asp-validation-for="Calificacion" class="text-danger"></span>
                                 </div>
                                 <div class="col-md-6 col-lg-6 col-sm-12">
-                                    <label for="">Picture</label>
-                                    <input type="text" class="form-control" name="Picture">
+                                    <label asp-for="PictureBook" class="control-label">Imagen del Libro</label>
+                                    <input asp-for="PictureBook" name="imagen" type="file" class="form-control" />
+                                    <span asp-validation-for="PictureBook" class="text-danger"></span>
                                 </div>
                             </div>
                             <div class="d-flex justify-content-center">
