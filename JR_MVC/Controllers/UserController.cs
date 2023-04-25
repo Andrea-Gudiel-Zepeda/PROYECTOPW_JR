@@ -34,7 +34,7 @@ namespace JR_MVC.Controllers
             bool contraseñaIncorrecta = true;
             bool emailIncorrecto = true;
             
-            IEnumerable<JR_DB.User> usuario = await Functions.APIService.UserGetList();
+            IEnumerable<JR_DB.User> usuario = await Functions.APIServiceUser.UserGetList();
 
             foreach (var us in usuario)
             {
@@ -68,7 +68,7 @@ namespace JR_MVC.Controllers
                 }
                 else
                 {
-                    ViewBag.Credenciales = "La contraseña ingresa es incorrecta";
+                    ViewBag.Credenciales = "La contraseña ingresada es incorrecta";
                 }
 
             }
@@ -93,7 +93,7 @@ namespace JR_MVC.Controllers
         {
             if (ModelState.IsValid)
             {
-                await Functions.APIService.UserSet(usuario);
+                await Functions.APIServiceUser.UserSet(usuario);
                 //falta el mensaje y direccionar 
                 return RedirectToAction(nameof(SingUp));
             }
@@ -118,7 +118,7 @@ namespace JR_MVC.Controllers
             int IdUser = 0;
             JR_DB.User NewUser = new JR_DB.User();
 
-            IEnumerable<JR_DB.User> usuario = await Functions.APIService.UserGetList();
+            IEnumerable<JR_DB.User> usuario = await Functions.APIServiceUser.UserGetList();
 
             foreach (var us in usuario)
             {

@@ -3,7 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections;
 using System.Diagnostics;
-using System.IO;
+using System.Text;
+using System.Web;
 
 
 namespace JR_MVC.Controllers
@@ -27,7 +28,7 @@ namespace JR_MVC.Controllers
         [HttpPost]
         public async Task<IActionResult> ValidacionCredencialesL(string email, string password)
         {
-            IEnumerable<JR_DB.User> usuario = await Functions.APIService.UserGetList();
+            IEnumerable<JR_DB.User> usuario = await Functions.APIServiceUser.UserGetList();
             bool encontrado = false;
             foreach (var us in usuario)
             {
@@ -69,7 +70,7 @@ namespace JR_MVC.Controllers
         [HttpPost]
         public async Task<IActionResult> ValidacionCredencialesP(string email, string password)
         {
-            IEnumerable<JR_DB.User> usuario = await Functions.APIService.UserGetList();
+            IEnumerable<JR_DB.User> usuario = await Functions.APIServiceUser.UserGetList();
             bool encontrado = false;
             foreach (var us in usuario)
             {
@@ -111,7 +112,7 @@ namespace JR_MVC.Controllers
         [HttpPost]
         public async Task<IActionResult> ValidacionCredencialesB(string email, string password)
         {
-            IEnumerable<JR_DB.User> usuario = await Functions.APIService.UserGetList();
+            IEnumerable<JR_DB.User> usuario = await Functions.APIServiceUser.UserGetList();
             bool encontrado = false;
             foreach (var us in usuario)
             {
@@ -204,21 +205,28 @@ namespace JR_MVC.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateBook_Read([Bind("IdBook,NameBook,AuthorBook,BookPublish,DateBook,Calificacion,PictureBook")] Book book, IFormCollection collection)
+        public async Task<IActionResult> CreateBook_Read([Bind("IdBook,NameBook,AuthorBook,BookPublish,DateBook,Calificacion,PictureBook,Imagen")] Book book, IFormCollection collection)
         {
             //validar calificacion
-            //validar imagen
-            string imagen = collection["Imagen"];
-            book.IdCategorie = 0;
-            book.IdUser = IdUser;
-            if (ModelState.IsValid)
+            bool calificacion = await Functions.APIServiceCalificacion.GetCalificacionByID(IdUser, book.Calificacion);
+            if (calificacion)
             {
-                await Functions.APIServiceBook.BookSet(book);
-                //falta el mensaje y direccionar 
-                return RedirectToAction(nameof(CreateBook_Read));
+                //validar imagen
+                var imagen = collection["Imagen"];
+                byte[] bytes = Encoding.UTF8.GetBytes(imagen);
+
+                book.PictureBook = bytes;
+                book.IdCategorie = 0;
+                book.IdUser = IdUser;
+                if (ModelState.IsValid)
+                {
+                    await Functions.APIServiceBook.BookSet(book);
+                    //falta el mensaje y direccionar 
+                    ViewBag.BookCreate = "Libro Ingresado correctamente";
+                    return RedirectToAction(nameof(CreateBook_Read));
+                }
             }
-
-
+            
             //_jrContext.Books.Add(book);
             //_jrContext.SaveChanges();
 

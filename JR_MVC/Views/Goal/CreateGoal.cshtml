@@ -1,0 +1,34 @@
+﻿@model JR_DB.Goal;
+
+<body class=" " data-bs-spy="scroll" data-bs-target="#elements-section" data-bs-offset="0" tabindex="0">
+
+    <section class="section">
+        <div class="row">
+            <div class="col-lg-12">
+
+                <div class="card">
+                    <div class="header-title">
+                        <h4 class="card-title"> Crear mi meta</h4>
+                    </div>
+                    <div class="card-body">
+                        <form asp-action="CreateGoal">
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                            <h5> @ViewBag.GoalCreate </h5>
+                            <div class="row">
+                                <div class="col-md-12 col-lg-12 col-sm-12">
+                                    <label asp-for="GoalBook" class="control-label">Meta</label>
+                                    <input asp-for="GoalBook" class="form-control" />
+                                    <span asp-validation-for="GoalBook" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-center">
+                                <button type="submit" class="btn btn-primary">Crear</button> <a asp-action="ShowGoal" class="btn btn-primary">Regresar</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</body>

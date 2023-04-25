@@ -1,7 +1,10 @@
 ﻿using JR_MVC.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Collections;
 using System.Diagnostics;
+using System.Reflection.Metadata.Ecma335;
+using System.Text;
 
 namespace JR_MVC.Controllers
 {
@@ -14,157 +17,180 @@ namespace JR_MVC.Controllers
             _logger = logger;
         }
 
-        [HttpGet]
-        public IActionResult Pagina_Principal()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        public IActionResult Pagina_Principal(IFormCollection collection)
-        {
-            return View();
-        }
+        public static int IdUser = 0;
 
         [HttpGet]
-        public IActionResult SingIn()
+        public async Task<IActionResult> ValidacionCredencialesG()
         {
             return View();
         }
 
         [HttpPost]
-        public IActionResult SingIn(IFormCollection collection)
+        public async Task<IActionResult> ValidacionCredencialesG(string email, string password)
         {
-            ViewBag.Id = "1";
-            return View();
-        }
-
-        [HttpGet]
-        public IActionResult SingUp()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        public IActionResult SingUp(IFormCollection collection)
-        {
-               
-            return View();
-        }
-
-
-        public IActionResult Recoverpw()
-        {
-            return View();
-        }
-
-        public IActionResult User_Profile()
-        {
-            return View();
-        }
-
-        public IActionResult error404()
-        {
-            return View();
-        }
-
-        public IActionResult AcercaDe()
-        {
-            return View();
-        }
-
-        public IActionResult Read_List()
-        {
-            return View();
-        }
-
-        public IActionResult Buy_List()
-        {
-            return View();
-        }
-
-        public IActionResult ToDo_List()
-        {
-            return View();
-        }
-
-        public IActionResult CreateBook_Read()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        public IActionResult CreateBook_Read(IFormCollection collection)
-        {
-            int id = Convert.ToInt32(ViewBag.Id);
-            JrDbContext _jrContext = new JrDbContext();
-            JR_MVC.Models.Book book = new JR_MVC.Models.Book
+            IEnumerable<JR_DB.User> usuario = await Functions.APIServiceUser.UserGetList();
+            bool encontrado = false;
+            foreach (var us in usuario)
             {
-                IdBook = 0,
-                NameBook = collection["NombreLibro"],
-                AuthorBook = collection["NombreAutor"],
-                //BookPublish = collection["publicacion"],
-                DateBook = Convert.ToDateTime(collection["FechaLeido"]),
-                IdCategorie = 1,
-                IdUser = id
-            };
+                if (us.Email == email)
+                {
+                    if (us.Password == password)
+                    {
+                        IdUser = us.IdUser;
+                        encontrado = true;
+                        break;
+                    }
+                    else
+                    {
+                        ViewBag.error = "La contraseña es incorrecta, ingrese de nuevo";
+                        return View();
+                    }
+                }
+                else
+                {
+                    ViewBag.error = "No se encontro el usuario, intente de nuevo para poder continuar";
+                    return View();
+                }
+            }
 
-            //_jrContext.Books.Add(book);
-            //_jrContext.SaveChanges();
+            if (encontrado)
+            {
+                return RedirectToAction("ShowGoal", "Goal");
+            }
 
-            return View();
-        }
-
-        public IActionResult CreateBook_Buy()
-        {
             return View();
         }
 
         [HttpGet]
-        public IActionResult CreateBook()
+        public async Task<IActionResult> ShowGoal()
+        {
+            IEnumerable<JR_DB.Goal> goals = await Functions.APIServiceGoal.GoalGetList();
+            IEnumerable<JR_DB.Book> books = await Functions.APIServiceBook.BookGetList();
+            int contadorlibros = 0;
+            JR_DB.Goal goalUser = new JR_DB.Goal();
+            bool encontrado = false;
+            foreach (var bk in books)
+            {
+                if (bk.IdCategorie == 0 && bk.IdUser == IdUser)
+                {
+                    contadorlibros += 1;
+                }
+            }
+
+            foreach (var gl in goals)
+            {
+                if (gl.IdUser == IdUser)
+                {
+                    goalUser = gl;
+                    encontrado = true;
+                    break;
+                }
+            }
+
+            if (encontrado)
+            {
+                goalUser.Progress = (contadorlibros * 100) / goalUser.GoalBook;
+                await Functions.APIServiceGoal.GoalEdit(goalUser, goalUser.IdGoal);
+                return View(goalUser);
+            }
+            else
+            {
+                ViewBag.NoGoal = "No ha ingresado ninguna meta con este usuario";
+                return View();
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> CreateGoal()
         {
             return View();
         }
 
         [HttpPost]
-        public IActionResult CreateBook(Book book)
+        public async Task<IActionResult> CreateGoal([Bind("IdGoal,GoalBook, Progress, idUser")] JR_DB.Goal goal)
         {
+            IEnumerable<JR_DB.Goal> goals = await Functions.APIServiceGoal.GoalGetList();
+            bool encontrado = false;
+            foreach (var gl in goals)
+            {
+                if (gl.IdUser == IdUser)
+                {
+                    encontrado = true;
+                    break;
+                }
+            }
+
+            if (encontrado)
+            {
+                ViewBag.GoalCreate = "Ya existe una meta creada con este usuario";
+            }
+            else
+            {
+                if (ModelState.IsValid)
+                {
+                    goal.IdUser = IdUser;
+                    await Functions.APIServiceGoal.GoalSet(goal);
+                    //falta el mensaje y direccionar 
+                    ViewBag.GoalCreate = "Meta Ingresada correctamente";
+                    return RedirectToAction("CreateGoal", "Goal");
+                }
+            }
+
             return View();
         }
 
-        public IActionResult CreateBook_ToDo()
+        [HttpGet]
+        public async Task<IActionResult> EditGoal(int id)
         {
-            return View();
+            JR_DB.Goal goal = await Functions.APIServiceGoal.GetGoalByID(id);
+            
+            return View(goal);
         }
 
-        public IActionResult UpdateBook()
+        [HttpPost]
+        public async Task<IActionResult> EditGoal(int id, [Bind("IdGoal,GoalBook, Progress, idUser")] JR_DB.Goal goal)
         {
-            return View();
+            if (id != goal.IdGoal)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                goal.IdUser = IdUser;
+                await Functions.APIServiceGoal.GoalEdit(goal, id);
+              
+                return RedirectToAction(nameof(ShowGoal));
+            }
+            return View(goal);
         }
 
-        public IActionResult ZonaReseñas()
+        [HttpGet]
+        public async Task<IActionResult> DeleteGoal(int id)
         {
-            return View();
+
+            JR_DB.Goal goal = await Functions.APIServiceGoal.GetGoalByID(id);
+
+            if (goal == null)
+            {
+                return NotFound();
+            }
+
+            return View(goal);
         }
 
-        public IActionResult CreateReseña()
+        
+        [HttpPost, ActionName("DeleteGoal")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            return View();
-        }
+            if (id != 0)
+            {
+                await Functions.APIServiceGoal.GoalDelete(id);
+            }
 
-        public IActionResult UpdateReseña()
-        {
-            return View();
-        }
-
-        public IActionResult Terms_Service()
-        {
-            return View();
-        }
-
-        public IActionResult Privacy_Policy()
-        {
-            return View();
+            //await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(ShowGoal));
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

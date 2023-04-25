@@ -15,13 +15,10 @@ namespace JR_MVC.Controllers
         }
 
         [HttpGet]
-        public IActionResult Pagina_Principal()
+        public async Task<IActionResult> Pagina_Principal()
         {
             return View();
         }
-
-       
-
 
         public IActionResult error404()
         {

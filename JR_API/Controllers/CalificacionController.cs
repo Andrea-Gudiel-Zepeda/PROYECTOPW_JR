@@ -67,7 +67,7 @@ namespace JR_API.Controllers
         //OBTNER POR ID 
         [Route("GetByID/{id}")]
         [HttpGet]
-        public async Task<ActionResult> GetByID(int id)
+        public async Task<ActionResult> GetByID(int id, int calificacionBook)
         {
             if (id == null || _context.Calificacions == null)
             {
@@ -76,13 +76,19 @@ namespace JR_API.Controllers
 
             var calificacion = await _context.Calificacions.FindAsync(id);
 
+            
             if (calificacion == null)
             {
                 return NotFound();
             }
             else
             {
-                return Ok(calificacion);
+                if (calificacionBook >= calificacion.LimiteInferior && calificacionBook <= calificacion.LimiteSuperior)
+                {
+                    return Ok(calificacion);
+                }
+
+                return Ok(false);
             }
         }
 

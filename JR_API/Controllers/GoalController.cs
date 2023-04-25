@@ -101,10 +101,12 @@ namespace JR_API.Controllers
             {
                 Models.Goal newGoal = new Models.Goal
                 {
+                    IdGoal = goal.IdGoal,
                     GoalBook = goal.GoalBook,
                     Progress = goal.Progress,
                     IdUser = goal.IdUser,
                 };
+
                 _context.Update(newGoal);
                 await _context.SaveChangesAsync();
                 return Ok(generalResult);
