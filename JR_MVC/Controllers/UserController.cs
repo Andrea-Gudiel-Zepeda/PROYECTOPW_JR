@@ -138,6 +138,8 @@ namespace JR_MVC.Controllers
             if (emailCorrecto)
             {
                 //cambiar la contraseña
+                NewUser.Password = newPassword;
+                await Functions.APIServiceUser.UserEdit(NewUser, NewUser.IdUser);
                 return RedirectToAction(nameof(SingIn));
             }
             else

@@ -95,12 +95,12 @@ namespace JR_MVC.Functions
             }
         }
 
-        public static async System.Threading.Tasks.Task<bool> GetUserByID(int id)
+        public static async System.Threading.Tasks.Task<JR_DB.User> GetUserByID(int id)
         {
             var response = await GetByIDMethod("User/GetByID", id);
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
-                return JsonConvert.DeserializeObject<bool>(await response.Content.ReadAsStringAsync());
+                return JsonConvert.DeserializeObject<JR_DB.User>(await response.Content.ReadAsStringAsync());
             }
             else
             {

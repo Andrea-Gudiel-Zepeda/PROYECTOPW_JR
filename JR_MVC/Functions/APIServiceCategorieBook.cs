@@ -95,12 +95,12 @@ namespace JR_MVC.Functions
             }
         }
 
-        public static async System.Threading.Tasks.Task<bool> GetCategorieByID(int id)
+        public static async System.Threading.Tasks.Task<JR_DB.CategorieBook> GetCategorieByID(int id)
         {
             var response = await GetByIDMethod("Categorie/GetByID", id);
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
-                return JsonConvert.DeserializeObject<bool>(await response.Content.ReadAsStringAsync());
+                return JsonConvert.DeserializeObject<JR_DB.CategorieBook>(await response.Content.ReadAsStringAsync());
             }
             else
             {
@@ -108,7 +108,7 @@ namespace JR_MVC.Functions
             }
         }
 
-        public static async System.Threading.Tasks.Task<JR_DB.GeneralResult> Categoriedit(JR_DB.CategorieBook object_to_serialize, int id)
+        public static async System.Threading.Tasks.Task<JR_DB.GeneralResult> CategorieEdit(JR_DB.CategorieBook object_to_serialize, int id)
         {
             var json_ = Newtonsoft.Json.JsonConvert.SerializeObject(object_to_serialize);
             var response = await EditMethod("Categorie/Edit", id, json_);

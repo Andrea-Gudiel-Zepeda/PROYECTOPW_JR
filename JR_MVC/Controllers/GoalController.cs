@@ -189,7 +189,7 @@ namespace JR_MVC.Controllers
                 await Functions.APIServiceGoal.GoalDelete(id);
             }
 
-            //await _context.SaveChangesAsync();
+            
             return RedirectToAction(nameof(ShowGoal));
         }
 

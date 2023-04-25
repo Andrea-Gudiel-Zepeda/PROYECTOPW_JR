@@ -95,12 +95,12 @@ namespace JR_MVC.Functions
             }
         }
 
-        public static async System.Threading.Tasks.Task<bool> GetReseñaByID(int id)
+        public static async System.Threading.Tasks.Task<JR_DB.Reseña> GetReseñaByID(int id)
         {
             var response = await GetByIDMethod("Reseña/GetByID", id);
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
-                return JsonConvert.DeserializeObject<bool>(await response.Content.ReadAsStringAsync());
+                return JsonConvert.DeserializeObject<JR_DB.Reseña>(await response.Content.ReadAsStringAsync());
             }
             else
             {
