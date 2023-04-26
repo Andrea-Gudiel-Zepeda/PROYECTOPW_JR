@@ -71,7 +71,6 @@ namespace JR_MVC.Controllers
             }
 
 
-
             return View();
         }
 
@@ -84,13 +83,25 @@ namespace JR_MVC.Controllers
 
         //Recibe los datos para crear el usuario nuevo y retornar la misma página con mensaje
         [HttpPost]
-        public async Task<IActionResult> SingUp([Bind("IdUser,FullName,LastName,Email,NumberPhone,Password")] User usuario)
+        public async Task<IActionResult> SingUp([Bind("IdUser,FullName,LastName,Email,NumberPhone,Password")] JR_DB.User usuario)
         {
-            if (ModelState.IsValid)
+            IEnumerable<JR_DB.User> usuarioslist = await Functions.APIServiceUser.UserGetList();
+
+            foreach (var us in usuarioslist)
             {
-                await Functions.APIServiceUser.UserSet(usuario);
-                //falta el mensaje y direccionar 
-                return RedirectToAction(nameof(SingUp));
+                if (us.Email == usuario.Email)
+                {
+                    ViewBag.Credenciales = "Ya existe un usuario creado con esos datos";
+                }
+                else
+                {
+                    if (ModelState.IsValid)
+                    {
+                        await Functions.APIServiceUser.UserSet(usuario);
+                        return RedirectToAction(nameof(SingUp));
+                    }
+
+                }
             }
 
             return View(usuario);
@@ -110,7 +121,6 @@ namespace JR_MVC.Controllers
             string email = collection["Email"];
             string newPassword = collection["Password"];
             bool emailCorrecto = false;
-            int IdUser = 0;
             JR_DB.User NewUser = new JR_DB.User();
 
             IEnumerable<JR_DB.User> usuario = await Functions.APIServiceUser.UserGetList();
@@ -120,7 +130,6 @@ namespace JR_MVC.Controllers
                 if (us.Email == email)
                 {
                     emailCorrecto = true;
-                    IdUser = us.IdUser;
                     NewUser = us;
                     break;
                 }
@@ -156,11 +165,72 @@ namespace JR_MVC.Controllers
         //Muestra el perfil de usuario 
         [HttpGet]
         [Authorize]
-        public IActionResult User_Profile()
+        public async Task<IActionResult> User_Profile()
         {
-            return View();
+            int idUsuario = Convert.ToInt32(User.Claims.FirstOrDefault(s => s.Type == "idUser")?.Value);
+            JR_DB.User user = await Functions.APIServiceUser.GetUserByID(idUsuario);
+            
+            return View(user);
         }
-        //Recibe los nuevos valores para editar la informacion
+
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> EditUser(int id)
+        {
+            JR_DB.User user = await Functions.APIServiceUser.GetUserByID(id);
+
+            return View(user);
+        }
+
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> EditUser(int id, [Bind("IdUser,FullName,LastName,Email,NumberPhone,Password")] JR_DB.User usuario)
+        {
+            int idUsuario = Convert.ToInt32(User.Claims.FirstOrDefault(s => s.Type == "idUser")?.Value);
+            if (id != usuario.IdUser)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                await Functions.APIServiceUser.UserEdit(usuario, id);
+
+                return RedirectToAction(nameof(User_Profile));
+            }
+            return View(usuario);
+        }
+
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> DeleteUser(int id)
+        {
+
+            JR_DB.User usuario = await Functions.APIServiceUser.GetUserByID(id);
+
+            if (usuario == null)
+            {
+                return NotFound();
+            }
+
+            return View(usuario);
+        }
+
+
+        [HttpPost, ActionName("DeleteUser")]
+        [ValidateAntiForgeryToken]
+        [Authorize]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            if (id != 0)
+            {
+                await Functions.APIServiceUser.UserDelete(id);
+            }
+
+
+            return RedirectToAction(nameof(SingIn));
+        }
+        
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

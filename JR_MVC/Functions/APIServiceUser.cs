@@ -81,7 +81,7 @@ namespace JR_MVC.Functions
             }
         }
 
-        public static async System.Threading.Tasks.Task<JR_DB.GeneralResult> UserSet(JR_MVC.Models.User object_to_serialize)
+        public static async System.Threading.Tasks.Task<JR_DB.GeneralResult> UserSet(JR_DB.User object_to_serialize)
         {
             var json_ = Newtonsoft.Json.JsonConvert.SerializeObject(object_to_serialize);
             var response = await SetMethod("User/Set", json_);//httpClient.PostAsync(baseurl + "User/Set", content);

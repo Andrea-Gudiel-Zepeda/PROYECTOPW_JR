@@ -1,4 +1,5 @@
 ﻿using JR_MVC.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections;
 using System.Diagnostics;
@@ -14,159 +15,143 @@ namespace JR_MVC.Controllers
             _logger = logger;
         }
 
+        //Obtener reseñas
         [HttpGet]
-        public IActionResult Pagina_Principal()
+        [Authorize]
+        public async Task<IActionResult> ZonaReseñas()
         {
-            return View();
-        }
+            int idUsuario = Convert.ToInt32(User.Claims.FirstOrDefault(s => s.Type == "idUser")?.Value);
+            IEnumerable<JR_DB.Reseña> reseñas = await Functions.APIServiceReseña.ReseñaGetList();
+            List<JR_DB.Reseña> reseñas_ls = new List<JR_DB.Reseña>();
 
-        [HttpPost]
-        public IActionResult Pagina_Principal(IFormCollection collection)
-        {
-            return View();
-        }
-
-        [HttpGet]
-        public IActionResult SingIn()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        public IActionResult SingIn(IFormCollection collection)
-        {
-            ViewBag.Id = "1";
-            return View();
-        }
-
-        [HttpGet]
-        public IActionResult SingUp()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        public IActionResult SingUp(IFormCollection collection)
-        {
-               
-            return View();
-        }
-
-
-        public IActionResult Recoverpw()
-        {
-            return View();
-        }
-
-        public IActionResult User_Profile()
-        {
-            return View();
-        }
-
-        public IActionResult error404()
-        {
-            return View();
-        }
-
-        public IActionResult AcercaDe()
-        {
-            return View();
-        }
-
-        public IActionResult Read_List()
-        {
-            return View();
-        }
-
-        public IActionResult Buy_List()
-        {
-            return View();
-        }
-
-        public IActionResult ToDo_List()
-        {
-            return View();
-        }
-
-        public IActionResult CreateBook_Read()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        public IActionResult CreateBook_Read(IFormCollection collection)
-        {
-            int id = Convert.ToInt32(ViewBag.Id);
-            JrDbContext _jrContext = new JrDbContext();
-            JR_MVC.Models.Book book = new JR_MVC.Models.Book
+            foreach (var rs in reseñas)
             {
-                IdBook = 0,
-                NameBook = collection["NombreLibro"],
-                AuthorBook = collection["NombreAutor"],
-                //BookPublish = collection["publicacion"],
-                DateBook = Convert.ToDateTime(collection["FechaLeido"]),
-                IdCategorie = 1,
-                IdUser = id
-            };
-
-            //_jrContext.Books.Add(book);
-            //_jrContext.SaveChanges();
-
-            return View();
+                if (rs.IdUser == idUsuario)
+                {
+                    reseñas_ls.Add(rs);
+                }
+            }
+            return View(reseñas_ls);
         }
 
-        public IActionResult CreateBook_Buy()
-        {
-            return View();
-        }
-
+        //Crear libro
         [HttpGet]
-        public IActionResult CreateBook()
+        [Authorize]
+        public async Task<IActionResult> CreateReseña()
         {
             return View();
         }
 
         [HttpPost]
-        public IActionResult CreateBook(Book book)
+        [Authorize]
+        public async Task<IActionResult> CreateReseña([Bind("IdReseña,NameBook,AuthorBook,GeneroBook,PagesBook,PuntuacionBook,PuntuacionTrama,PuntuacionPersonajes,DescriptionReseña,FavoritePhrase")] JR_DB.Reseña reseña)
         {
+            int idUsuario = Convert.ToInt32(User.Claims.FirstOrDefault(s => s.Type == "idUser")?.Value);
+            bool calificacionEncontrada = false;
+            //validar calificacion
+            IEnumerable<JR_DB.Calificacion> calificaciones = await Functions.APIServiceCalificacion.CalificacionGetList();
+            foreach (var cl in calificaciones)
+            {
+                if (cl.IdUser == idUsuario)
+                {
+                    if (reseña.PuntuacionBook >= cl.LimiteInferior && reseña.PuntuacionBook <= cl.LimiteSuperior)
+                    {
+                        if (reseña.PuntuacionTrama >= cl.LimiteInferior && reseña.PuntuacionTrama <= cl.LimiteSuperior)
+                        {
+                            if (reseña.PuntuacionPersonajes >= cl.LimiteInferior && reseña.PuntuacionPersonajes <= cl.LimiteSuperior)
+                            {
+                                reseña.IdUser = idUsuario;
+                                if (ModelState.IsValid)
+                                {
+                                    await Functions.APIServiceReseña.ReseñaSet(reseña);
+                                    return RedirectToAction(nameof(ZonaReseñas));
+                                }
+                            }
+                            else
+                            {
+                                calificacionEncontrada = true;
+                                ViewBag.BookCreate = "La calificacion de los personajes no esta entre el rango creado";
+                            }
+                        }
+                        else
+                        {
+                            calificacionEncontrada = true;
+                            ViewBag.BookCreate = "La calificacion de la trama no esta entre el rango creado";
+                        }
+
+
+                    }
+                    else
+                    {
+                        calificacionEncontrada = true;
+                        ViewBag.BookCreate = "La calificacion del libro no esta entre el rango creado";
+                        return View();
+                    }
+                }
+            }
+
+            if (!calificacionEncontrada)
+            {
+                ViewBag.BookCreate = "No existe un rango de calificacion configurada";
+                return View();
+            }
+
             return View();
         }
 
-        public IActionResult CreateBook_ToDo()
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> EditReseña(int id)
         {
-            return View();
+            JR_DB.Reseña reseña = await Functions.APIServiceReseña.GetReseñaByID(id);
+
+            return View(reseña);
         }
 
-        public IActionResult UpdateBook()
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> EditReseña(int id, [Bind("IdReseña,NameBook,AuthorBook,GeneroBook,PagesBook,PuntuacionBook,PuntuacionTrama,PuntuacionPersonajes,DescriptionReseña,FavoritePhrase")] JR_DB.Reseña reseña)
         {
-            return View();
+            int idUsuario = Convert.ToInt32(User.Claims.FirstOrDefault(s => s.Type == "idUser")?.Value);
+            if (id != reseña.IdReseña)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                await Functions.APIServiceReseña.ReseñaEdit(reseña, id);
+                return RedirectToAction(nameof(ZonaReseñas));
+
+            }
+            return View(reseña);
         }
 
-        public IActionResult ZonaReseñas()
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> DeleteReseña(int id)
         {
-            return View();
+
+            JR_DB.Reseña reseña = await Functions.APIServiceReseña.GetReseñaByID(id);
+
+
+            return View(reseña);
         }
 
-        public IActionResult CreateReseña()
-        {
-            return View();
-        }
 
-        public IActionResult UpdateReseña()
+        [HttpPost, ActionName("DeleteReseña")]
+        [ValidateAntiForgeryToken]
+        [Authorize]
+        public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            return View();
-        }
+            if (id != 0)
+            {
+                await Functions.APIServiceReseña.ReseñaDelete(id);
+            }
 
-        public IActionResult Terms_Service()
-        {
-            return View();
-        }
 
-        public IActionResult Privacy_Policy()
-        {
-            return View();
+            return RedirectToAction(nameof(ZonaReseñas));
         }
-
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

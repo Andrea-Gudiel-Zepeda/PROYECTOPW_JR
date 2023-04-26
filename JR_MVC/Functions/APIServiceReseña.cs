@@ -81,7 +81,7 @@ namespace JR_MVC.Functions
             }
         }
 
-        public static async System.Threading.Tasks.Task<JR_DB.GeneralResult> ReseñaSet(JR_MVC.Models.Reseña object_to_serialize)
+        public static async System.Threading.Tasks.Task<JR_DB.GeneralResult> ReseñaSet(JR_DB.Reseña object_to_serialize)
         {
             var json_ = Newtonsoft.Json.JsonConvert.SerializeObject(object_to_serialize);
             var response = await SetMethod("Reseña/Set", json_);//httpClient.PostAsync(baseurl + "User/Set", content);

@@ -45,7 +45,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 
                    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
 
-                   options.LoginPath = "/User"; /*this option indicates where is the login page*/
+                   options.LoginPath = "/User/SingIn"; /*this option indicates where is the login page*/
 
                });
 
@@ -64,8 +64,8 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-app.UseAuthentication();
 app.UseAuthorization();
+app.UseAuthentication();
 
 app.MapControllerRoute(
     name: "default",
