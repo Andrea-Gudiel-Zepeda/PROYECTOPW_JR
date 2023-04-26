@@ -1,0 +1,47 @@
+﻿@model JR_DB.Goal;
+@{
+    ViewData["Title"] = "EditGoal";
+}
+
+
+<body class=" " data-bs-spy="scroll" data-bs-target="#elements-section" data-bs-offset="0" tabindex="0">
+
+    <section class="section">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="header-title">
+                        <h4 class="card-title">Modificar Meta</h4>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-danger">¿Seguro que desea eliminar la película?</p>
+                        <dl class="row">
+                            <dt class="col-sm-2">
+                                @Html.DisplayNameFor(model => model.GoalBook)
+                            </dt>
+                            <dd class="col-sm-10">
+                                @Html.DisplayFor(model => model.GoalBook)
+                            </dd>
+                            <dt class="col-sm-2">
+                                @Html.DisplayNameFor(model => model.Progress)
+                            </dt>
+                            <dd class="col-sm-10">
+                                @Html.DisplayFor(model => model.Progress)
+                            </dd>
+                        </dl>
+                    </div>
+                    <div class="card-footer">
+                        <form asp-action="DeleteGoal">
+                            <input type="hidden" asp-for="IdGoal" />
+                            <input type="submit" value="Eliminar" class="btn btn-primary" />
+                            <br />
+                            <a asp-action="ShowGoal" class="btn btn-primary">Regresar</a>
+                        </form>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</body>

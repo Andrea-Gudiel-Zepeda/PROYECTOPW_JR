@@ -5,20 +5,24 @@ using System.Collections;
 using System.Diagnostics;
 using JR_MVC.Functions;
 using Blazored.LocalStorage;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 
 namespace JR_MVC.Controllers
 {
     public class UserController : Controller
     {
         private readonly ILogger<UserController> _logger;
-      
+
 
         public UserController(ILogger<UserController> logger)
         {
             _logger = logger;
         }
 
-        
+
 
         //Muestra la página para iniciar sesión
         [HttpGet]
@@ -31,8 +35,6 @@ namespace JR_MVC.Controllers
         [HttpPost]
         public async Task<IActionResult> SingIn(string email, string password)
         {
-            bool contraseñaIncorrecta = true;
-            bool emailIncorrecto = true;
             
             IEnumerable<JR_DB.User> usuario = await Functions.APIServiceUser.UserGetList();
 
@@ -42,40 +44,33 @@ namespace JR_MVC.Controllers
                 {
                     if (us.Password == password)
                     {
-                        contraseñaIncorrecta = false;
-                        emailIncorrecto = false;
                         ViewBag.idUser = us.IdUser;
-                        break;
+
+                        var claims = new List<Claim>();
+                        claims.Add(new Claim("idUser", Convert.ToString(us.IdUser)));
+                        //claims.Add(new Claim(ClaimTypes.NameIdentifier, Convert.ToString(us.IdUser)));
+                        var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+                        var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
+
+                        await HttpContext.SignInAsync(claimsPrincipal);
+                        return RedirectToAction("Pagina_Principal", "JR");
+
                     }
                     else
                     {
-                        contraseñaIncorrecta &= true;
-                        emailIncorrecto = false;
+                        ViewBag.Credenciales = "La contraseña ingresada es incorrecta";
+                        return View();
                     }
                 }
                 else
                 {
-                    emailIncorrecto &= true;
+                    ViewBag.Credenciales = "No se encontró ningún usuario registrado con este correo";
+                    return View();
                 }
             }
 
-          
-            if (!emailIncorrecto)
-            {
-                if (!contraseñaIncorrecta)
-                {
-                    return RedirectToAction("Pagina_Principal", "JR");
-                }
-                else
-                {
-                    ViewBag.Credenciales = "La contraseña ingresada es incorrecta";
-                }
 
-            }
-            else
-            {
-                ViewBag.Credenciales = "No se encontró ningún usuario registrado con este correo";
-            }
 
             return View();
         }
@@ -124,10 +119,10 @@ namespace JR_MVC.Controllers
             {
                 if (us.Email == email)
                 {
-                   emailCorrecto = true;
-                   IdUser = us.IdUser;
-                   NewUser = us;
-                   break;
+                    emailCorrecto = true;
+                    IdUser = us.IdUser;
+                    NewUser = us;
+                    break;
                 }
                 else
                 {
@@ -148,11 +143,19 @@ namespace JR_MVC.Controllers
             }
 
             return View();
-            
+
         }
+
+        [HttpPost]
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync();
+            return RedirectToAction(nameof(SingIn));
+        } 
 
         //Muestra el perfil de usuario 
         [HttpGet]
+        [Authorize]
         public IActionResult User_Profile()
         {
             return View();

@@ -1,6 +1,6 @@
-﻿
+﻿@model JR_DB.Goal;
 @{
-    ViewData["Title"] = "Pagina_Principal";
+    ViewData["Title"] = "ShowGoal";
 }
 
 <div class="conatiner-fluid content-inner mt-5 py-0">
@@ -14,15 +14,16 @@
                                         <div class="col-lg-12 banner-item">
                                             <div class="banner-text">
                                                 <h1 class="fw-bold mb-4">
-                                                    Hello to <span class="text-secondary"> Reading Journal!</span>
+                                                     <span class="text-secondary"> GOAL AND PROGRESS </span>
                                                 </h1>
                                             </div>
+                                            <h4>@ViewBag.NoGoal</h4>
                                             <div class="row">
-                                             <p class="mb-4"> Ver tu meta y tu progreso </p>
-                                             <button type="button" class="btn btn-primary" href="/Goal/ValidacionCredencialesG">Ver</button>
+                                             <p class="mb-4"> Meta </p>
+                                             <h3> @Model.GoalBook </h3>
                                              <br />
-                                             <p class="mb-4"> Este es tu rango de calificaciones </p>
-                                             <button type="button" class="btn btn-primary" href="/Calificacion/ShowGoal">Ver</button>
+                                             <p class="mb-4"> Progreso </p>
+                                             <h3> @Model.Progress </h3>
                                             </div>
                                         </div>
                                     </div>
@@ -35,23 +36,28 @@
                               <div class="card-body ">
                                   <div class="row justify-content-center align-items-center banner-container">
                                     <div class="col-lg-12 banner-item">
-                                    <div class="banner-text">
-                                        <h4 class="fw-bold mb-4">
-                                            Meta de tu <span class="text-secondary"> Reading Journal!</span>
-                                        </h4>
-                                    </div>
                                       <div class="row">
                                         <div class="col-lg-4 banner-item">
                                             <p class="mb-4"> Crea tu meta </p>
-                                            <button type="button" class="btn btn-primary" href="/Goal/ValidacionCredencialesG">Create</button>
+                                            <div class="d-flex justify-content-center">
+                                                <a asp-action="CreateGoal" class="btn btn-primary">Create</a>
+                                            </div>
                                         </div>
                                         <div class="col-lg-4 banner-item">
                                             <p class="mb-4"> Edita tu meta </p>
-                                            <button type="button" class="btn btn-primary">Edit</button>
+                                            <form asp-action="EditGoal">
+                                               <div class="d-flex justify-content-center">
+                                                    <a asp-action="EditGoal" asp-route-id="@Model.IdGoal" class="btn btn-primary">Editar</a>  
+                                               </div>
+                                             </form>
                                         </div>
                                         <div class="col-lg-4 banner-item">
                                             <p class="mb-4"> Elimina tu meta </p>
-                                            <button type="button" class="btn btn-primary">Delete</button>
+                                             <form asp-action="DeleteGoal">
+                                                <div class="d-flex justify-content-center">
+                                                    <a asp-action="DeleteGoal" asp-route-id="@Model.IdGoal" class="btn btn-primary">Delete</a>
+                                                </div>
+                                             </form>
                                         </div>
                                       </div>
                                   </div>
@@ -59,36 +65,6 @@
                            </div>
                            </div>
                        </div>
-
-                <div class="col-md-12">
-                    <div class="card banner">
-                        <div class="card-body ">
-                            <div class="row justify-content-center align-items-center banner-container">
-                                <div class="col-lg-12 banner-item">
-                                    <div class="banner-text">
-                                        <h4 class="fw-bold mb-4">
-                                            Calificacion de tu <span class="text-secondary"> Reading Journal!</span>
-                                        </h4>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-lg-4 banner-item">
-                                            <p class="mb-4"> Crea tu calificacion </p>
-                                            <button type="button" class="btn btn-primary" href="/Calificacion/ValidacionCredencialesC">Create</button>
-                                        </div>
-                                        <div class="col-lg-4 banner-item">
-                                            <p class="mb-4"> Edita tu calificacion </p>
-                                            <button type="button" class="btn btn-primary">Edit</button>
-                                        </div>
-                                        <div class="col-lg-4 banner-item">
-                                            <p class="mb-4"> Elimina tu calificacion </p>
-                                            <button type="button" class="btn btn-primary">Delete</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
                     </div>
                 </div>
             </div>

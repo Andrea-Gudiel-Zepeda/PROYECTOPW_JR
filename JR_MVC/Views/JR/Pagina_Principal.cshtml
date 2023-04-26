@@ -21,7 +21,7 @@
                                              <div class="col-lg-6">
                                                      <p class="mb-4"> Ver tu meta y tu progreso </p>
                                                      <div class="d-flex justify-content-center">
-                                                        @using (Html.BeginForm("ValidacionCredencialesG", "Goal", FormMethod.Get, new { enctype = "multipart/form-data" }))
+                                                        @using (Html.BeginForm("ShowGoal", "Goal", FormMethod.Get, new { enctype = "multipart/form-data" }))
                                                         {
                                                            <button type="submit" id="guardar-datos" class="btn btn-primary">Ver</button>
                                                         }

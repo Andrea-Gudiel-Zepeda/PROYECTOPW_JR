@@ -17,61 +17,20 @@ namespace JR_MVC.Controllers
             _logger = logger;
         }
 
-        public static int IdUser = 0;
-
-        [HttpGet]
-        public async Task<IActionResult> ValidacionCredencialesG()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> ValidacionCredencialesG(string email, string password)
-        {
-            IEnumerable<JR_DB.User> usuario = await Functions.APIServiceUser.UserGetList();
-            bool encontrado = false;
-            foreach (var us in usuario)
-            {
-                if (us.Email == email)
-                {
-                    if (us.Password == password)
-                    {
-                        IdUser = us.IdUser;
-                        encontrado = true;
-                        break;
-                    }
-                    else
-                    {
-                        ViewBag.error = "La contraseña es incorrecta, ingrese de nuevo";
-                        return View();
-                    }
-                }
-                else
-                {
-                    ViewBag.error = "No se encontro el usuario, intente de nuevo para poder continuar";
-                    return View();
-                }
-            }
-
-            if (encontrado)
-            {
-                return RedirectToAction("ShowGoal", "Goal");
-            }
-
-            return View();
-        }
-
         [HttpGet]
         public async Task<IActionResult> ShowGoal()
         {
             IEnumerable<JR_DB.Goal> goals = await Functions.APIServiceGoal.GoalGetList();
             IEnumerable<JR_DB.Book> books = await Functions.APIServiceBook.BookGetList();
+            int idUsuario = Convert.ToInt32(User.Claims.FirstOrDefault(s => s.Type == "idUser")?.Value);
             int contadorlibros = 0;
             JR_DB.Goal goalUser = new JR_DB.Goal();
+            goalUser.GoalBook = 0;
+            goalUser.Progress = 0;
             bool encontrado = false;
             foreach (var bk in books)
             {
-                if (bk.IdCategorie == 0 && bk.IdUser == IdUser)
+                if (bk.IdCategorie == 0 && bk.IdUser == idUsuario)
                 {
                     contadorlibros += 1;
                 }
@@ -79,7 +38,7 @@ namespace JR_MVC.Controllers
 
             foreach (var gl in goals)
             {
-                if (gl.IdUser == IdUser)
+                if (gl.IdUser == idUsuario)
                 {
                     goalUser = gl;
                     encontrado = true;
@@ -96,7 +55,7 @@ namespace JR_MVC.Controllers
             else
             {
                 ViewBag.NoGoal = "No ha ingresado ninguna meta con este usuario";
-                return View();
+                return View(goalUser);
             }
         }
 
@@ -111,9 +70,10 @@ namespace JR_MVC.Controllers
         {
             IEnumerable<JR_DB.Goal> goals = await Functions.APIServiceGoal.GoalGetList();
             bool encontrado = false;
+            int idUsuario = Convert.ToInt32(User.Claims.FirstOrDefault(s => s.Type == "idUser")?.Value);
             foreach (var gl in goals)
             {
-                if (gl.IdUser == IdUser)
+                if (gl.IdUser == idUsuario)
                 {
                     encontrado = true;
                     break;
@@ -128,7 +88,7 @@ namespace JR_MVC.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    goal.IdUser = IdUser;
+                    goal.IdUser = idUsuario;
                     await Functions.APIServiceGoal.GoalSet(goal);
                     //falta el mensaje y direccionar 
                     ViewBag.GoalCreate = "Meta Ingresada correctamente";
@@ -150,6 +110,7 @@ namespace JR_MVC.Controllers
         [HttpPost]
         public async Task<IActionResult> EditGoal(int id, [Bind("IdGoal,GoalBook, Progress, idUser")] JR_DB.Goal goal)
         {
+            int idUsuario = Convert.ToInt32(User.Claims.FirstOrDefault(s => s.Type == "idUser")?.Value);
             if (id != goal.IdGoal)
             {
                 return NotFound();
@@ -157,7 +118,7 @@ namespace JR_MVC.Controllers
 
             if (ModelState.IsValid)
             {
-                goal.IdUser = IdUser;
+                goal.IdUser = idUsuario;
                 await Functions.APIServiceGoal.GoalEdit(goal, id);
               
                 return RedirectToAction(nameof(ShowGoal));
