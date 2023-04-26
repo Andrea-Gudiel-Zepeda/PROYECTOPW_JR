@@ -81,7 +81,7 @@ namespace JR_MVC.Functions
             }
         }
 
-        public static async System.Threading.Tasks.Task<JR_DB.GeneralResult> BookSet(JR_MVC.Models.Book object_to_serialize)
+        public static async System.Threading.Tasks.Task<JR_DB.GeneralResult> BookSet(JR_DB.Book object_to_serialize)
         {
             var json_ = Newtonsoft.Json.JsonConvert.SerializeObject(object_to_serialize);
             var response = await SetMethod("Book/Set", json_);//httpClient.PostAsync(baseurl + "User/Set", content);
@@ -108,7 +108,20 @@ namespace JR_MVC.Functions
             }
         }
 
-        public static async System.Threading.Tasks.Task<JR_DB.GeneralResult> BookEdit(JR_DB.User object_to_serialize, int id)
+        public static async System.Threading.Tasks.Task<IEnumerable<JR_DB.Book>> GetListByCategorie(int idCategorie)
+        {
+            var response = await GetByIDMethod("Book/GetListBookCategorie", idCategorie);
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                return JsonConvert.DeserializeObject<IEnumerable<JR_DB.Book>>(await response.Content.ReadAsStringAsync());
+            }
+            else
+            {
+                throw new Exception(response.StatusCode.ToString());
+            }
+        }
+
+        public static async System.Threading.Tasks.Task<JR_DB.GeneralResult> BookEdit(JR_DB.Book object_to_serialize, int id)
         {
             var json_ = Newtonsoft.Json.JsonConvert.SerializeObject(object_to_serialize);
             var response = await EditMethod("Book/Edit", id, json_);

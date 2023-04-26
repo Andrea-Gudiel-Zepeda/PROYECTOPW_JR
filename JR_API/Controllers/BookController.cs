@@ -31,7 +31,6 @@ namespace JR_API.Controllers
                                                             BookPublish = b.BookPublish,
                                                             DateBook = b.DateBook,
                                                             Calificacion = b.Calificacion,
-                                                            PictureBook = b.PictureBook,
                                                             IdCategorie = b.IdCategorie,
                                                             IdUser = b.IdUser,
 
@@ -41,9 +40,9 @@ namespace JR_API.Controllers
         }
 
         //POR ID PARA TRAER UNA SOLA CATEGORIA
-        [Route("GetList/{idCategorie}")]
+        [Route("GetListBookCategorie/{idCategorie}")]
         [HttpGet]
-        public async Task<ActionResult> GetListRegion(int idCategorie)
+        public async Task<ActionResult> GetListBookCategorie(int idCategorie)
         {
             IEnumerable<JR_DB.Book> book = await (_context.Books
                                                      .Where(b => b.IdCategorie == idCategorie)
@@ -56,7 +55,6 @@ namespace JR_API.Controllers
                                                           BookPublish = b.BookPublish,
                                                           DateBook = b.DateBook,
                                                           Calificacion = b.Calificacion,
-                                                          PictureBook = b.PictureBook,
                                                           IdCategorie = b.IdCategorie,
                                                           IdUser = b.IdUser
 
@@ -88,7 +86,6 @@ namespace JR_API.Controllers
                     BookPublish = book.BookPublish,
                     DateBook = book.DateBook,
                     Calificacion = book.Calificacion,
-                    PictureBook = book.PictureBook,
                     IdCategorie = book.IdCategorie,
                     IdUser = book.IdUser
                 };
@@ -146,7 +143,6 @@ namespace JR_API.Controllers
                     BookPublish = book.BookPublish,
                     DateBook = book.DateBook,
                     Calificacion = book.Calificacion,
-                    PictureBook = book.PictureBook,
                     IdCategorie = book.IdCategorie,
                     IdUser = book.IdUser
                 };

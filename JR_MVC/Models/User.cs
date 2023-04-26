@@ -17,7 +17,7 @@ public partial class User
 
     public string Password { get; set; } = null!;
 
-    public virtual Book? Book { get; set; }
+    public virtual ICollection<Book> Books { get; } = new List<Book>();
 
     public virtual ICollection<Calificacion> Calificacions { get; } = new List<Calificacion>();
 

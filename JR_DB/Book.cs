@@ -20,8 +20,6 @@ namespace JR_DB
 
         public int Calificacion { get; set; }
 
-        public byte[] PictureBook { get; set; } = null!;
-
         public int IdCategorie { get; set; }
 
         public int IdUser { get; set; }

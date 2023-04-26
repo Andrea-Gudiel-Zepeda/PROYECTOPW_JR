@@ -1,0 +1,70 @@
+﻿@model JR_DB.Book;
+@{
+    ViewData["Title"] = "DeleteBookR"; 
+}
+
+
+<body class=" " data-bs-spy="scroll" data-bs-target="#elements-section" data-bs-offset="0" tabindex="0">
+
+    <section class="section">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="header-title">
+                        <h4 class="card-title">Eliminar libro</h4>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-danger">¿Seguro que desea eliminar el libro?</p>
+                        <dl class="row">
+                            <dt class="col-sm-2">
+                                @Html.DisplayNameFor(model => model.NameBook)
+                            </dt>
+                            <dd class="col-sm-10">
+                                @Html.DisplayFor(model => model.NameBook)
+                            </dd>
+                            <dt class="col-sm-2">
+                                @Html.DisplayNameFor(model => model.AuthorBook)
+                            </dt>
+                            <dd class="col-sm-10">
+                                @Html.DisplayFor(model => model.AuthorBook)
+                            </dd>
+                            <dt class="col-sm-2">
+                                @Html.DisplayNameFor(model => model.BookPublish)
+                            </dt>
+                            <dd class="col-sm-10">
+                                @Html.DisplayFor(model => model.BookPublish)
+                            </dd>
+                            <dt class="col-sm-2">
+                                @Html.DisplayNameFor(model => model.DateBook)
+                            </dt>
+                            <dd class="col-sm-10">
+                                @Html.DisplayFor(model => model.DateBook)
+                            </dd>
+                            <dt class="col-sm-2">
+                                @Html.DisplayNameFor(model => model.Calificacion)
+                            </dt>
+                            <dd class="col-sm-10">
+                                @Html.DisplayFor(model => model.Calificacion)
+                            </dd>
+                        </dl>
+                    </div>
+                    <div class="card-footer">
+                        <form asp-action="DeleteBookR">
+                            <input type="hidden" asp-for="IdBook" />
+                            <input type="hidden" asp-for="IdCategorie" />
+                            <input type="hidden" asp-for="IdUser" />
+                            <div class="col-md-6 col-lg-6 col-sm-12">
+                                <input type="submit" value="Eliminar" class="btn btn-primary" />
+                            </div>
+                            <br />
+                            <div class="col-md-6 col-lg-6 col-sm-12">
+                                <a asp-action="Read_List" class="btn btn-primary">Regresar</a>
+                            </div>
+                        </form>
+                    </div>
+                    </div>
+                </div>
+            </div>
+    </section>
+
+</body>

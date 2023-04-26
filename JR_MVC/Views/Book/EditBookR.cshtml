@@ -1,8 +1,9 @@
 ﻿@model JR_DB.Book
 
 @{
-    ViewData["Title"] = "CreateBook_Read";
+    ViewData["Title"] = "EditBookR";
 }
+
 
 <body class=" " data-bs-spy="scroll" data-bs-target="#elements-section" data-bs-offset="0" tabindex="0">
 
@@ -12,52 +13,54 @@
 
                 <div class="card">
                     <div class="header-title">
-                        <h4 class="card-title">Agregar Libro</h4>
+                        <h4 class="card-title">Modificar Libro</h4>
                     </div>
                     <div class="card-body">
-                        <form asp-action="CreateBook_Read">
-                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                            <div class="row">
-                                <div class="col-md-6 col-lg-6 col-sm-12">
-                                    <label asp-for="NameBook" class="control-label">Nombre de Libro</label>
+                        <form asp-action="EditBookR">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <input type="hidden" asp-for="IdBook" />
+                        <div class="row">
+                            <div class="col-md-6 col-lg-6 col-sm-12">
+                                 <label asp-for="NameBook" class="control-label"></label>
                                     <input asp-for="NameBook" class="form-control" />
                                     <span asp-validation-for="NameBook" class="text-danger"></span>
-                                </div>
-                                <div class="col-md-6 col-lg-6 col-sm-12">
-                                    <label asp-for="AuthorBook" class="control-label">Nombre de Autor</label>
+                            </div>
+                            <div class="col-md-6 col-lg-6 col-sm-12">
+                                 <label asp-for="AuthorBook" class="control-label"></label>
                                     <input asp-for="AuthorBook" class="form-control" />
                                     <span asp-validation-for="AuthorBook" class="text-danger"></span>
-                                </div>
                             </div>
-                            <div class="row">
-                                <div class="col-md-6 col-lg-6 col-sm-12">
-                                    <label asp-for="BookPublish" class="control-label">Fecha de publicacion</label>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 col-lg-6 col-sm-12">
+                                 <label asp-for="BookPublish" class="control-label"></label>
                                     <input asp-for="BookPublish" type="date" class="form-control" />
                                     <span asp-validation-for="BookPublish" class="text-danger"></span>
-                                </div>
-                                <div class="col-md-6 col-lg-6 col-sm-12">
-                                    <label asp-for="DateBook" class="control-label">Fecha de leído</label>
-                                    <input asp-for="DateBook" type="date" class="form-control" />
-                                    <span asp-validation-for="DateBook" class="text-danger"></span>
-                                </div>
                             </div>
-                            <div class="row">
-                                <div class="col-md-6 col-lg-6 col-sm-12">
-                                    <label asp-for="Calificacion" class="control-label">Calificacion</label>
+                            <div class="col-md-6 col-lg-6 col-sm-12">
+                                    <label asp-for="DateBook" class="control-label"></label>
+                                    <input asp-for="DateBook"  type="date" class="form-control" />
+                                    <span asp-validation-for="DateBook" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 col-lg-6 col-sm-12">
+                                 <label asp-for="Calificacion" class="control-label"></label>
                                     <input asp-for="Calificacion" type="number" class="form-control" />
                                     <span asp-validation-for="Calificacion" class="text-danger"></span>
-                                </div>
                             </div>
-                            <h5>@ViewBag.BookCreate</h5>
+                        </div>
+                         <input type="hidden" asp-for="IdCategorie" />
+                         <input type="hidden" asp-for="IdUser" />
                             <div class="d-flex justify-content-center">
                                 <div class="col-md-6 col-lg-6 col-sm-12">
-                                    <button type="submit" class="btn btn-primary">Agregar</button>
+                                    <button type="submit" class="btn btn-primary">Grabar</button>
                                 </div>
                                 <div class="col-md-6 col-lg-6 col-sm-12">
                                     <a asp-action="Read_List" class="btn btn-primary">Regresar</a>
                                 </div>
                             </div>
-                        </form>
+                      </form> 
                     </div>
                 </div>
             </div>

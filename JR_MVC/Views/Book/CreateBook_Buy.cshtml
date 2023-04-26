@@ -1,7 +1,7 @@
 ﻿@model JR_DB.Book
 
 @{
-    ViewData["Title"] = "CreateBook_ToDo";
+    ViewData["Title"] = "CreateBook_Buy";
 }
 
 <body class=" " data-bs-spy="scroll" data-bs-target="#elements-section" data-bs-offset="0" tabindex="0">
@@ -15,7 +15,7 @@
                         <h4 class="card-title">Agregar Libro</h4>
                     </div>
                     <div class="card-body">
-                        <form asp-action="CreateBook_ToDo">
+                        <form asp-action="CreateBook_Buy">
                             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                             <div class="row">
                                 <div class="col-md-6 col-lg-6 col-sm-12">
@@ -42,7 +42,7 @@
                                     <button type="submit" class="btn btn-primary">Agregar</button>
                                 </div>
                                 <div class="col-md-6 col-lg-6 col-sm-12">
-                                    <a asp-action="ToDo_List" class="btn btn-primary">Regresar</a>
+                                    <a asp-action="Buy_List" class="btn btn-primary">Regresar</a>
                                 </div>
                             </div>
                         </form>

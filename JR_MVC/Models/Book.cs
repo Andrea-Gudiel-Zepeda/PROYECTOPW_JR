@@ -11,13 +11,11 @@ public partial class Book
 
     public string AuthorBook { get; set; } = null!;
 
-    public DateTime BookPublish { get; set; }
+    public DateTime BookPublish { get; set; } 
 
     public DateTime? DateBook { get; set; }
 
     public int Calificacion { get; set; }
-
-    public byte[] PictureBook { get; set; } = null!;
 
     public int IdCategorie { get; set; }
 

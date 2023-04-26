@@ -59,17 +59,14 @@ public partial class JrDbContext : DbContext
 
             entity.ToTable("books");
 
-            entity.HasIndex(e => e.IdCategorie, "id_categorie").IsUnique();
+            entity.HasIndex(e => e.IdCategorie, "Books_fk0");
 
-            entity.HasIndex(e => e.IdUser, "id_user").IsUnique();
+            entity.HasIndex(e => e.IdUser, "Books_fk1");
 
             entity.Property(e => e.IdBook).HasColumnName("id_book");
             entity.Property(e => e.AuthorBook)
                 .HasMaxLength(100)
                 .HasColumnName("author_book");
-            entity.Property(e => e.BookPublish)
-                .HasColumnType("date")
-                .HasColumnName("book_publish");
             entity.Property(e => e.DateBook)
                 .HasColumnType("date")
                 .HasColumnName("date_book");
@@ -78,17 +75,17 @@ public partial class JrDbContext : DbContext
             entity.Property(e => e.NameBook)
                 .HasMaxLength(100)
                 .HasColumnName("name_book");
-            entity.Property(e => e.PictureBook)
-                .HasColumnType("mediumblob")
-                .HasColumnName("picture_book");
+            entity.Property(e => e.BookPublish)
+                .HasColumnType("date")
+                .HasColumnName("book_publish");
 
-            entity.HasOne(d => d.IdCategorieNavigation).WithOne(p => p.Book)
-                .HasForeignKey<Book>(d => d.IdCategorie)
+            entity.HasOne(d => d.IdCategorieNavigation).WithMany(p => p.Books)
+                .HasForeignKey(d => d.IdCategorie)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("Books_fk0");
 
-            entity.HasOne(d => d.IdUserNavigation).WithOne(p => p.Book)
-                .HasForeignKey<Book>(d => d.IdUser)
+            entity.HasOne(d => d.IdUserNavigation).WithMany(p => p.Books)
+                .HasForeignKey(d => d.IdUser)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("Books_fk1");
         });
@@ -177,6 +174,8 @@ public partial class JrDbContext : DbContext
             entity.HasKey(e => e.IdReto).HasName("PRIMARY");
 
             entity.ToTable("retos");
+
+            entity.HasIndex(e => e.IdUser, "id_user");
 
             entity.Property(e => e.IdReto).HasColumnName("id_reto");
             entity.Property(e => e.DateEnd)

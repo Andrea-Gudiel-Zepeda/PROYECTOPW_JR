@@ -9,5 +9,5 @@ public partial class CategorieBook
 
     public string NameCategorie { get; set; } = null!;
 
-    public virtual Book? Book { get; set; }
+    public virtual ICollection<Book> Books { get; } = new List<Book>();
 }

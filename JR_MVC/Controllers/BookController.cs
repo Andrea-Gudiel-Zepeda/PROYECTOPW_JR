@@ -1,4 +1,5 @@
 ﻿using JR_MVC.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections;
@@ -17,236 +18,334 @@ namespace JR_MVC.Controllers
         {
             _logger = logger;
         }
-        public static int IdUser = 0;
 
+        //Obtener libro leidos = 1
         [HttpGet]
-        public async Task<IActionResult> ValidacionCredencialesL()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> ValidacionCredencialesL(string email, string password)
-        {
-            IEnumerable<JR_DB.User> usuario = await Functions.APIServiceUser.UserGetList();
-            bool encontrado = false;
-            foreach (var us in usuario)
-            {
-                if (us.Email == email)
-                {
-                    if (us.Password == password)
-                    {
-                        IdUser = us.IdUser;
-                        encontrado = true;
-                        break;
-                    }
-                    else
-                    {
-                        ViewBag.error = "La contraseña es incorrecta, ingrese de nuevo";
-                        return View();
-                    }
-                }
-                else
-                {
-                    ViewBag.error = "No se encontro el usuario, intente de nuevo para poder continuar";
-                    return View();
-                }
-            }
-
-            if (encontrado)
-            {
-                return RedirectToAction("CreateBook_Read", "Book");
-            }
-
-            return View();
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> ValidacionCredencialesP()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> ValidacionCredencialesP(string email, string password)
-        {
-            IEnumerable<JR_DB.User> usuario = await Functions.APIServiceUser.UserGetList();
-            bool encontrado = false;
-            foreach (var us in usuario)
-            {
-                if (us.Email == email)
-                {
-                    if (us.Password == password)
-                    {
-                        IdUser = us.IdUser;
-                        encontrado = true;
-                        break;
-                    }
-                    else
-                    {
-                        ViewBag.error = "La contraseña es incorrecta, ingrese de nuevo";
-                        return View();
-                    }
-                }
-                else
-                {
-                    ViewBag.error = "No se encontro el usuario, intente de nuevo para poder continuar";
-                    return View();
-                }
-            }
-
-            if (encontrado)
-            {
-                return RedirectToAction("CreateBook_ToDo", "Book");
-            }
-
-            return View();
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> ValidacionCredencialesB()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> ValidacionCredencialesB(string email, string password)
-        {
-            IEnumerable<JR_DB.User> usuario = await Functions.APIServiceUser.UserGetList();
-            bool encontrado = false;
-            foreach (var us in usuario)
-            {
-                if (us.Email == email)
-                {
-                    if (us.Password == password)
-                    {
-                        IdUser = us.IdUser;
-                        encontrado = true;
-                        break;
-                    }
-                    else
-                    {
-                        ViewBag.error = "La contraseña es incorrecta, ingrese de nuevo";
-                        return View();
-                    }
-                }
-                else
-                {
-                    ViewBag.error = "No se encontro el usuario, intente de nuevo para poder continuar";
-                    return View();
-                }
-            }
-
-            if (encontrado)
-            {
-                return RedirectToAction("CreateBook_Buy", "Book");
-            }
-
-            return View();
-        }
-
-        [HttpGet]
+        [Authorize]
         public async Task<IActionResult> Read_List()
         {
-            IEnumerable<JR_DB.Book> books = await Functions.APIServiceBook.BookGetList();
-            List<JR_DB.Book> books_l = new List<JR_DB.Book>();
+            int idUsuario = Convert.ToInt32(User.Claims.FirstOrDefault(s => s.Type == "idUser")?.Value);
+            int idCategorie = 1;
+            IEnumerable<JR_DB.Book> books = await Functions.APIServiceBook.GetListByCategorie(idCategorie);
+            List<JR_DB.Book> books_ls = new List<JR_DB.Book>();
 
-            foreach (var bk in books)
+            foreach(var bk in books)
             {
-                if(bk.IdCategorie == 0)
+                if(bk.IdUser == idUsuario)
                 {
-                    books_l.Add(bk);
+                    books_ls.Add(bk);
                 }
             }
-
-            return View(books_l);
+            return View(books_ls);
         }
 
-        //obtener libros pendientes
+        //Crear libro
         [HttpGet]
-        public async Task<IActionResult> ToDo_List()
-        {
-            IEnumerable<JR_DB.Book> books = await Functions.APIServiceBook.BookGetList();
-            List<JR_DB.Book> books_p = new List<JR_DB.Book>();
-
-            foreach (var bk in books)
-            {
-                if (bk.IdCategorie == 2)
-                {
-                    books_p.Add(bk);
-                }
-            }
-
-            return View(books_p);
-        }
-
-        //Obtener listado libros por comprar
-        [HttpGet]
-        public async Task<IActionResult> Buy_List()
-        {
-            IEnumerable<JR_DB.Book> books = await Functions.APIServiceBook.BookGetList();
-            List<JR_DB.Book> books_b = new List<JR_DB.Book>();
-
-            foreach (var bk in books)
-            {
-                if (bk.IdCategorie == 2)
-                {
-                    books_b.Add(bk);
-                }
-            }
-
-            return View(books_b);
-        }
-
-        [HttpGet]
+        [Authorize]
         public async Task<IActionResult> CreateBook_Read()
         {
             return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateBook_Read([Bind("IdBook,NameBook,AuthorBook,BookPublish,DateBook,Calificacion,PictureBook,Imagen")] Book book, IFormCollection collection)
+        [Authorize]
+        public async Task<IActionResult> CreateBook_Read([Bind("IdBook,NameBook,AuthorBook,BookPublish,DateBook,Calificacion")] JR_DB.Book book)
         {
+            int idUsuario = Convert.ToInt32(User.Claims.FirstOrDefault(s => s.Type == "idUser")?.Value);
+            bool calificacionEncontrada = false;
             //validar calificacion
-            bool calificacion = true;//await Functions.APIServiceCalificacion.GetCalificacionByID(IdUser, book.Calificacion);
-            if (calificacion)
+            IEnumerable<JR_DB.Calificacion> calificaciones = await Functions.APIServiceCalificacion.CalificacionGetList();
+            foreach (var cl in calificaciones)
             {
-                //validar imagen
-                var imagen = collection["Imagen"];
-                byte[] bytes = Encoding.UTF8.GetBytes(imagen);
-
-                book.PictureBook = bytes;
-                book.IdCategorie = 0;
-                book.IdUser = IdUser;
-                if (ModelState.IsValid)
+                if (cl.IdUser == idUsuario)
                 {
-                    await Functions.APIServiceBook.BookSet(book);
-                    //falta el mensaje y direccionar 
-                    ViewBag.BookCreate = "Libro Ingresado correctamente";
-                    return RedirectToAction(nameof(CreateBook_Read));
+                    if(book.Calificacion >= cl.LimiteInferior && book.Calificacion <= cl.LimiteSuperior)
+                    {
+
+                        book.IdCategorie = 1;
+                        book.IdUser = idUsuario;
+                        if (ModelState.IsValid)
+                        {
+                            await Functions.APIServiceBook.BookSet(book);
+                            return RedirectToAction(nameof(Read_List));
+                        }
+                    }
+                    else
+                    {
+                        calificacionEncontrada = true;
+                        ViewBag.BookCreate = "La calificacion no esta entre el rango creado";
+                        return View();
+                    }
                 }
             }
+
+            if (!calificacionEncontrada)
+            {
+                ViewBag.BookCreate = "No existe un rango de calificacion configurada";
+                return View();
+            }
+
+            return View();
+        }
+
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> EditBookR(int id)
+        {
+            JR_DB.Book book = await Functions.APIServiceBook.GetBookByID(id);
+
+            return View(book);
+        }
+
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> EditBookR(int id, [Bind("IdBook,NameBook,AuthorBook,BookPublish,DateBook,Calificacion,IdCategorie,IdUser")] JR_DB.Book book)
+        {
+            int idUsuario = Convert.ToInt32(User.Claims.FirstOrDefault(s => s.Type == "idUser")?.Value);
+            if (id != book.IdBook)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                await Functions.APIServiceBook.BookEdit(book, id);
+                return RedirectToAction(nameof(Read_List));
+                
+            }
+            return View(book);
+        }
+
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> DeleteBookR(int id)
+        {
+
+            JR_DB.Book book = await Functions.APIServiceBook.GetBookByID(id);
+
+
+            return View(book);
+        }
+
+
+        [HttpPost, ActionName("DeleteBookR")]
+        [ValidateAntiForgeryToken]
+        [Authorize]
+        public async Task<IActionResult> DeleteConfirmedR(int id)
+        {
+            if (id != 0)
+            {
+                await Functions.APIServiceBook.BookDelete(id);
+            }
+
+
+            return RedirectToAction(nameof(Read_List));
+        }
+
+
+        //obtener libros pendientes = 2
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> ToDo_List()
+        {
+            int idUsuario = Convert.ToInt32(User.Claims.FirstOrDefault(s => s.Type == "idUser")?.Value);
+            int idCategorie = 2;
+            IEnumerable<JR_DB.Book> books = await Functions.APIServiceBook.GetListByCategorie(idCategorie);
+            List<JR_DB.Book> books_ls = new List<JR_DB.Book>();
+
+            foreach (var bk in books)
+            {
+                if (bk.IdUser == idUsuario)
+                {
+                    books_ls.Add(bk);
+                }
+            }
+            return View(books_ls);
+        }
+
+        //Crear libro pendientes
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> CreateBook_ToDo()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> CreateBook_ToDo([Bind("IdBook,NameBook,AuthorBook,BookPublish,DateBook,Calificacion")] JR_DB.Book book)
+        {
+            int idUsuario = Convert.ToInt32(User.Claims.FirstOrDefault(s => s.Type == "idUser")?.Value);
+                        book.Calificacion = 0;
+                        book.IdCategorie = 2;
+                        book.IdUser = idUsuario;
+                        if (ModelState.IsValid)
+                        {
+                            await Functions.APIServiceBook.BookSet(book);
+                            return RedirectToAction(nameof(ToDo_List));
+                        }
+                    
+                
             
-            //_jrContext.Books.Add(book);
-            //_jrContext.SaveChanges();
-
             return View();
         }
 
-        public IActionResult CreateBook_Buy()
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> EditBookP(int id)
+        {
+            JR_DB.Book book = await Functions.APIServiceBook.GetBookByID(id);
+
+            return View(book);
+        }
+
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> EditBookP(int id, [Bind("IdBook,NameBook,AuthorBook,BookPublish,DateBook,Calificacion,IdCategorie,IdUser")] JR_DB.Book book)
+        {
+            int idUsuario = Convert.ToInt32(User.Claims.FirstOrDefault(s => s.Type == "idUser")?.Value);
+            if (id != book.IdBook)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                await Functions.APIServiceBook.BookEdit(book, id);
+                return RedirectToAction(nameof(ToDo_List));
+
+            }
+            return View(book);
+        }
+
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> DeleteBookP(int id)
+        {
+
+            JR_DB.Book book = await Functions.APIServiceBook.GetBookByID(id);
+
+
+            return View(book);
+        }
+
+
+        [HttpPost, ActionName("DeleteBookP")]
+        [ValidateAntiForgeryToken]
+        [Authorize]
+        public async Task<IActionResult> DeleteConfirmedP(int id)
+        {
+            if (id != 0)
+            {
+                await Functions.APIServiceBook.BookDelete(id);
+            }
+
+
+            return RedirectToAction(nameof(ToDo_List));
+        }
+
+        //Obtener listado libros por comprar
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> Buy_List()
+        {
+            int idUsuario = Convert.ToInt32(User.Claims.FirstOrDefault(s => s.Type == "idUser")?.Value);
+            int idCategorie = 3;
+            IEnumerable<JR_DB.Book> books = await Functions.APIServiceBook.GetListByCategorie(idCategorie);
+            List<JR_DB.Book> books_ls = new List<JR_DB.Book>();
+
+            foreach (var bk in books)
+            {
+                if (bk.IdUser == idUsuario)
+                {
+                    books_ls.Add(bk);
+                }
+            }
+            return View(books_ls);
+        }
+
+        //Crear libro
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> CreateBook_Buy()
         {
             return View();
         }
 
-        public IActionResult CreateBook_ToDo()
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> CreateBook_Buy([Bind("IdBook,NameBook,AuthorBook,BookPublish,DateBook,Calificacion")] JR_DB.Book book)
         {
+            int idUsuario = Convert.ToInt32(User.Claims.FirstOrDefault(s => s.Type == "idUser")?.Value);
+            
+               book.Calificacion = 0;
+                        book.IdCategorie = 3;
+                        book.IdUser = idUsuario;
+                        if (ModelState.IsValid)
+                        {
+                            await Functions.APIServiceBook.BookSet(book);
+                            return RedirectToAction(nameof(Buy_List));
+                        }
+                  
+
             return View();
         }
 
-        public IActionResult UpdateBook()
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> EditBookB(int id)
         {
-            return View();
+            JR_DB.Book book = await Functions.APIServiceBook.GetBookByID(id);
+
+            return View(book);
         }
+
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> EditBookB(int id, [Bind("IdBook,NameBook,AuthorBook,BookPublish,DateBook,Calificacion,IdCategorie,IdUser")] JR_DB.Book book)
+        {
+            int idUsuario = Convert.ToInt32(User.Claims.FirstOrDefault(s => s.Type == "idUser")?.Value);
+            if (id != book.IdBook)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                await Functions.APIServiceBook.BookEdit(book, id);
+                return RedirectToAction(nameof(Buy_List));
+
+            }
+            return View(book);
+        }
+
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> DeleteBookB(int id)
+        {
+
+            JR_DB.Book book = await Functions.APIServiceBook.GetBookByID(id);
+
+
+            return View(book);
+        }
+
+
+        [HttpPost, ActionName("DeleteBookB")]
+        [ValidateAntiForgeryToken]
+        [Authorize]
+        public async Task<IActionResult> DeleteConfirmedB(int id)
+        {
+            if (id != 0)
+            {
+                await Functions.APIServiceBook.BookDelete(id);
+            }
+
+
+            return RedirectToAction(nameof(Buy_List));
+        }
+
+
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
