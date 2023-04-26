@@ -140,6 +140,7 @@ namespace JR_API.Controllers
             {
                 Models.Book newBook = new Models.Book
                 {
+                    IdBook = book.IdBook,
                     NameBook = book.NameBook,
                     AuthorBook = book.AuthorBook,
                     BookPublish = book.BookPublish,

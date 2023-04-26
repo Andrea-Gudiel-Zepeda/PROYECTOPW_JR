@@ -25,6 +25,7 @@ namespace JR_API.Controllers
                                                       .Select(cl =>
                                                         new JR_DB.Calificacion
                                                         {
+                                                            IdCalificacion = cl.IdCalificacion,
                                                             LimiteInferior = cl.LimiteInferior,
                                                             LimiteSuperior = cl.LimiteSuperior,
                                                             IdUser = cl.IdUser
@@ -67,7 +68,7 @@ namespace JR_API.Controllers
         //OBTNER POR ID 
         [Route("GetByID/{id}")]
         [HttpGet]
-        public async Task<ActionResult> GetByID(int id, int calificacionBook)
+        public async Task<ActionResult> GetByID(int id)
         {
             if (id == null || _context.Calificacions == null)
             {
@@ -83,12 +84,8 @@ namespace JR_API.Controllers
             }
             else
             {
-                if (calificacionBook >= calificacion.LimiteInferior && calificacionBook <= calificacion.LimiteSuperior)
-                {
-                    return Ok(calificacion);
-                }
-
-                return Ok(false);
+               return Ok(calificacion);
+                
             }
         }
 
@@ -106,6 +103,7 @@ namespace JR_API.Controllers
             {
                 Models.Calificacion newCalificacion = new Models.Calificacion
                 {
+                    IdCalificacion = calificacion.IdCalificacion,
                     LimiteInferior = calificacion.LimiteInferior,
                     LimiteSuperior = calificacion.LimiteSuperior,
                     IdUser = calificacion.IdUser

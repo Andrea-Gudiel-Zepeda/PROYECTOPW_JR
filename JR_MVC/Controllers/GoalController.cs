@@ -1,4 +1,5 @@
 ﻿using JR_MVC.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections;
@@ -18,6 +19,7 @@ namespace JR_MVC.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> ShowGoal()
         {
             IEnumerable<JR_DB.Goal> goals = await Functions.APIServiceGoal.GoalGetList();
@@ -60,12 +62,14 @@ namespace JR_MVC.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> CreateGoal()
         {
             return View();
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> CreateGoal([Bind("IdGoal,GoalBook, Progress, idUser")] JR_DB.Goal goal)
         {
             IEnumerable<JR_DB.Goal> goals = await Functions.APIServiceGoal.GoalGetList();
@@ -83,6 +87,7 @@ namespace JR_MVC.Controllers
             if (encontrado)
             {
                 ViewBag.GoalCreate = "Ya existe una meta creada con este usuario";
+                return View();
             }
             else
             {
@@ -90,9 +95,7 @@ namespace JR_MVC.Controllers
                 {
                     goal.IdUser = idUsuario;
                     await Functions.APIServiceGoal.GoalSet(goal);
-                    //falta el mensaje y direccionar 
-                    ViewBag.GoalCreate = "Meta Ingresada correctamente";
-                    return RedirectToAction("CreateGoal", "Goal");
+                    return RedirectToAction("ShowGoal", "Goal");
                 }
             }
 
@@ -100,6 +103,7 @@ namespace JR_MVC.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> EditGoal(int id)
         {
             JR_DB.Goal goal = await Functions.APIServiceGoal.GetGoalByID(id);
@@ -108,6 +112,7 @@ namespace JR_MVC.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> EditGoal(int id, [Bind("IdGoal,GoalBook, Progress, idUser")] JR_DB.Goal goal)
         {
             int idUsuario = Convert.ToInt32(User.Claims.FirstOrDefault(s => s.Type == "idUser")?.Value);
@@ -118,6 +123,7 @@ namespace JR_MVC.Controllers
 
             if (ModelState.IsValid)
             {
+                goal.IdGoal = id;
                 goal.IdUser = idUsuario;
                 await Functions.APIServiceGoal.GoalEdit(goal, id);
               
@@ -127,6 +133,7 @@ namespace JR_MVC.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> DeleteGoal(int id)
         {
 
@@ -143,6 +150,7 @@ namespace JR_MVC.Controllers
         
         [HttpPost, ActionName("DeleteGoal")]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             if (id != 0)

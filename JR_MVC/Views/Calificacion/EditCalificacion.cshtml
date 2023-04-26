@@ -1,6 +1,6 @@
-﻿@model JR_DB.Goal;
+﻿@model JR_DB.Calificacion;
 @{
-    ViewData["Title"] = "EditGoal";
+    ViewData["Title"] = "EditCalificacion";
 }
 
 
@@ -12,24 +12,33 @@
 
                 <div class="card">
                     <div class="header-title">
-                        <h4 class="card-title">Modificar Meta</h4>
+                        <h4 class="card-title">Modificar rango de calificacion</h4>
                     </div>
                     <div class="card-body">
-                         <form asp-action="EditGoal">
+                         <form asp-action="EditCalificacion">
                             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                            <input type="hidden" asp-for="IdGoal"/>
+                            <input type="hidden" asp-for="IdCalificacion"/>
                             <div class="row">
-                                <div class="col-md-12 col-lg-12 col-sm-12">
-                                    <label asp-for="GoalBook" class="control-label"></label>
-                                    <input asp-for="GoalBook" class="form-control" />
-                                    <span asp-validation-for="GoalBook" class="text-danger"></span>
+                                <div class="col-md-6 col-lg-6 col-sm-12">
+                                    <label asp-for="LimiteInferior" class="control-label"></label>
+                                    <input asp-for="LimiteInferior" type="number" class="form-control" />
+                                    <span asp-validation-for="LimiteInferior" class="text-danger"></span>
+                                </div>
+
+                                <div class="col-md-6 col-lg-6 col-sm-12">
+                                    <label asp-for="LimiteSuperior" class="control-label"></label>
+                                    <input asp-for="LimiteSuperior" type="number" class="form-control" />
+                                    <span asp-validation-for="LimiteSuperior" class="text-danger"></span>
                                 </div>
                             </div>
 
                             <div class="card-footer">
-                              <input type="submit" value="Grabar" class="btn btn-primary" /> 
-                              <br />
-                               <a asp-action="ShowGoal" class="btn btn-primary">Regresar</a>
+                                <div class="col-md-6 col-lg-6 col-sm-12">
+                                    <input type="submit" value="Grabar" class="btn btn-primary" />
+                                </div>
+                                <div class="col-md-6 col-lg-6 col-sm-12">
+                                    <a asp-action="ShowCalificacion" class="btn btn-primary">Regresar</a>
+                                </div>
                             </div>
                          </form>
                     </div>
@@ -37,5 +46,4 @@
             </div>
         </div>
     </section>
-
 </body>

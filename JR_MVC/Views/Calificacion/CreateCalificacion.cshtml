@@ -1,4 +1,4 @@
-﻿@model JR_DB.Goal;
+﻿@model JR_DB.Calificacion;
 
 <body class=" " data-bs-spy="scroll" data-bs-target="#elements-section" data-bs-offset="0" tabindex="0">
 
@@ -8,21 +8,32 @@
 
                 <div class="card">
                     <div class="header-title">
-                        <h4 class="card-title"> Crear mi meta</h4>
+                        <h4 class="card-title"> Crear rango de calificacion</h4>
                     </div>
                     <div class="card-body">
-                        <form asp-action="CreateGoal">
+                        <form asp-action="CreateCalificacion">
                             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                            <h5> @ViewBag.GoalCreate </h5>
+                            <h6>@ViewBag.CalificacionCreate</h6>
                             <div class="row">
                                 <div class="col-md-12 col-lg-12 col-sm-12">
-                                    <label asp-for="GoalBook" class="control-label">Meta</label>
-                                    <input asp-for="GoalBook" class="form-control" />
-                                    <span asp-validation-for="GoalBook" class="text-danger"></span>
+                                    <label asp-for="LimiteInferior" class="control-label">Meta</label>
+                                    <input asp-for="LimiteInferior" type ="number" class="form-control" />
+                                    <span asp-validation-for="LimiteInferior" class="text-danger"></span>
+                                </div>
+
+                                <div class="col-md-12 col-lg-12 col-sm-12">
+                                    <label asp-for="LimiteSuperior" class="control-label">Meta</label>
+                                    <input asp-for="LimiteSuperior" type="number" class="form-control" />
+                                    <span asp-validation-for="LimiteSuperior" class="text-danger"></span>
                                 </div>
                             </div>
-                            <div class="d-flex justify-content-center">
-                                <button type="submit" class="btn btn-primary">Crear</button> <a asp-action="ShowGoal" class="btn btn-primary">Regresar</a>
+                            <div class="d-flex justify-content-center"> 
+                                <div class="col-md-6 col-lg-6 col-sm-12">
+                                    <button type="submit" class="btn btn-primary">Crear</button>
+                                </div>
+                                <div class="col-md-6 col-lg-6 col-sm-12">
+                                    <a asp-action="ShowCalificacion" class="btn btn-primary">Regresar</a>
+                                </div>
                             </div>
                         </form>
                     </div>

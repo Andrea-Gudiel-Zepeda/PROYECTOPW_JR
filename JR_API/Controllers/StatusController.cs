@@ -97,6 +97,7 @@ namespace JR_API.Controllers
             {
                 Models.Status newStatus = new Models.Status
                 {
+                    IdStatus = status.IdStatus,
                     NameStatus = status.NameStatus,
                 };
                 _context.Update(newStatus);

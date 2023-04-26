@@ -208,7 +208,7 @@ namespace JR_MVC.Controllers
         public async Task<IActionResult> CreateBook_Read([Bind("IdBook,NameBook,AuthorBook,BookPublish,DateBook,Calificacion,PictureBook,Imagen")] Book book, IFormCollection collection)
         {
             //validar calificacion
-            bool calificacion = await Functions.APIServiceCalificacion.GetCalificacionByID(IdUser, book.Calificacion);
+            bool calificacion = true;//await Functions.APIServiceCalificacion.GetCalificacionByID(IdUser, book.Calificacion);
             if (calificacion)
             {
                 //validar imagen

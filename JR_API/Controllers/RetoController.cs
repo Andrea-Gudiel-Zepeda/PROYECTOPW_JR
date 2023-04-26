@@ -49,7 +49,6 @@ namespace JR_API.Controllers
             {
                 Models.Reto newReto = new Models.Reto
                 {
-                    IdReto = reto.IdReto,
                     NombreReto = reto.NombreReto,
                     Status = reto.Status,
                     IdUser = reto.IdUser,

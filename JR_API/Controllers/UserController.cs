@@ -107,6 +107,7 @@ namespace JR_API.Controllers
             {
                 Models.User newUser = new Models.User
                 {
+                    IdUser = user.IdUser,
                     FullName = user.FullName,
                     LastName = user.LastName,
                     Email = user.Email,

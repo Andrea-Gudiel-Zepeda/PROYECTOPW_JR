@@ -57,7 +57,7 @@ namespace JR_MVC.Functions
             return response;
         }
 
-        public static async Task<System.Net.Http.HttpResponseMessage> GetByIDMethod(string url, int id, int calificcacion)
+        public static async Task<System.Net.Http.HttpResponseMessage> GetByIDMethod(string url, int id)
         {
             HttpClientHandler clientHandler = new HttpClientHandler();
             clientHandler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; };
@@ -81,7 +81,7 @@ namespace JR_MVC.Functions
             }
         }
 
-        public static async System.Threading.Tasks.Task<JR_DB.GeneralResult> CalificacionSet(JR_MVC.Models.Calificacion object_to_serialize)
+        public static async System.Threading.Tasks.Task<JR_DB.GeneralResult> CalificacionSet(JR_DB.Calificacion object_to_serialize)
         {
             var json_ = Newtonsoft.Json.JsonConvert.SerializeObject(object_to_serialize);
             var response = await SetMethod("Calificacion/Set", json_);//httpClient.PostAsync(baseurl + "User/Set", content);
@@ -95,12 +95,12 @@ namespace JR_MVC.Functions
             }
         }
 
-        public static async System.Threading.Tasks.Task<bool> GetCalificacionByID(int id, int calificacion)
+        public static async System.Threading.Tasks.Task<JR_DB.Calificacion> GetCalificacionByID(int id)
         {
-            var response = await GetByIDMethod("Calificacion/GetByID", id, calificacion);
+            var response = await GetByIDMethod("Calificacion/GetByID", id);
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
-                return JsonConvert.DeserializeObject<bool>(await response.Content.ReadAsStringAsync());
+                return JsonConvert.DeserializeObject<JR_DB.Calificacion>(await response.Content.ReadAsStringAsync());
             }
             else
             {
@@ -108,7 +108,7 @@ namespace JR_MVC.Functions
             }
         }
 
-        public static async System.Threading.Tasks.Task<JR_DB.GeneralResult> CalificacionEdit(JR_DB.User object_to_serialize, int id)
+        public static async System.Threading.Tasks.Task<JR_DB.GeneralResult> CalificacionEdit(JR_DB.Calificacion object_to_serialize, int id)
         {
             var json_ = Newtonsoft.Json.JsonConvert.SerializeObject(object_to_serialize);
             var response = await EditMethod("Calificacion/Edit", id, json_);

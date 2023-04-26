@@ -1,4 +1,5 @@
 ﻿using JR_MVC.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections;
 using System.Diagnostics;
@@ -15,156 +16,140 @@ namespace JR_MVC.Controllers
         }
 
         [HttpGet]
-        public IActionResult Pagina_Principal()
+        [Authorize]
+        public async Task<IActionResult> ShowCalificacion()
         {
-            return View();
-        }
+            IEnumerable<JR_DB.Calificacion> calificaciones = await Functions.APIServiceCalificacion.CalificacionGetList();
+            
+            int idUsuario = Convert.ToInt32(User.Claims.FirstOrDefault(s => s.Type == "idUser")?.Value);
+            
+            JR_DB.Calificacion calificacionUser = new JR_DB.Calificacion();
+            calificacionUser.LimiteInferior = 0;
+            calificacionUser.LimiteSuperior = 0;
+            bool encontrado = false;
 
-        [HttpPost]
-        public IActionResult Pagina_Principal(IFormCollection collection)
-        {
-            return View();
-        }
-
-        [HttpGet]
-        public IActionResult SingIn()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        public IActionResult SingIn(IFormCollection collection)
-        {
-            ViewBag.Id = "1";
-            return View();
-        }
-
-        [HttpGet]
-        public IActionResult SingUp()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        public IActionResult SingUp(IFormCollection collection)
-        {
-               
-            return View();
-        }
-
-
-        public IActionResult Recoverpw()
-        {
-            return View();
-        }
-
-        public IActionResult User_Profile()
-        {
-            return View();
-        }
-
-        public IActionResult error404()
-        {
-            return View();
-        }
-
-        public IActionResult AcercaDe()
-        {
-            return View();
-        }
-
-        public IActionResult Read_List()
-        {
-            return View();
-        }
-
-        public IActionResult Buy_List()
-        {
-            return View();
-        }
-
-        public IActionResult ToDo_List()
-        {
-            return View();
-        }
-
-        public IActionResult CreateBook_Read()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        public IActionResult CreateBook_Read(IFormCollection collection)
-        {
-            int id = Convert.ToInt32(ViewBag.Id);
-            JrDbContext _jrContext = new JrDbContext();
-            JR_MVC.Models.Book book = new JR_MVC.Models.Book
+            foreach (var cf in calificaciones)
             {
-                IdBook = 0,
-                NameBook = collection["NombreLibro"],
-                AuthorBook = collection["NombreAutor"],
-                //BookPublish = collection["publicacion"],
-                DateBook = Convert.ToDateTime(collection["FechaLeido"]),
-                IdCategorie = 1,
-                IdUser = id
-            };
+                if (cf.IdUser == idUsuario)
+                {
+                    calificacionUser = cf;
+                    encontrado = true;
+                    break;
+                }
+            }
 
-            //_jrContext.Books.Add(book);
-            //_jrContext.SaveChanges();
-
-            return View();
-        }
-
-        public IActionResult CreateBook_Buy()
-        {
-            return View();
+            if (encontrado)
+            {
+                return View(calificacionUser);
+            }
+            else
+            {
+                ViewBag.NoCalificacion = "No ha ingresado ninguna calificacion con este usuario";
+                return View(calificacionUser);
+            }
         }
 
         [HttpGet]
-        public IActionResult CreateBook()
+        [Authorize]
+        public async Task<IActionResult> CreateCalificacion()
         {
             return View();
         }
 
         [HttpPost]
-        public IActionResult CreateBook(Book book)
+        [Authorize]
+        public async Task<IActionResult> CreateCalificacion([Bind("IdCalificacion, LimiteInferior, LimiteSuperior, IdUser")] JR_DB.Calificacion calificacion)
         {
+            IEnumerable<JR_DB.Calificacion> calificaciones = await Functions.APIServiceCalificacion.CalificacionGetList();
+            int idUsuario = Convert.ToInt32(User.Claims.FirstOrDefault(s => s.Type == "idUser")?.Value);
+            bool encontrado = false;
+
+            foreach (var cf in calificaciones)
+            {
+                if (cf.IdUser == idUsuario)
+                {
+                    encontrado = true;
+                    break;
+                }
+            }
+
+            if (encontrado)
+            {
+                ViewBag.CalificacionCreate = "Ya existe una calificacion creada con este usuario";
+                return View();
+            }
+            else
+            {
+                if (ModelState.IsValid)
+                {
+                    calificacion.IdUser = idUsuario;
+                    await Functions.APIServiceCalificacion.CalificacionSet(calificacion);
+                    return RedirectToAction("ShowCalificacion", "Calificacion");
+                }
+            }
+
             return View();
         }
 
-        public IActionResult CreateBook_ToDo()
+        
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> EditCalificacion(int id)
         {
-            return View();
+            JR_DB.Calificacion calificacion = await Functions.APIServiceCalificacion.GetCalificacionByID(id);
+
+            return View(calificacion);
         }
 
-        public IActionResult UpdateBook()
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> EditCalificacion(int id, [Bind("IdCalificacion, LimiteInferior, LimiteSuperior, IdUser")] JR_DB.Calificacion calificacion)
         {
-            return View();
+            int idUsuario = Convert.ToInt32(User.Claims.FirstOrDefault(s => s.Type == "idUser")?.Value);
+            if (id != calificacion.IdCalificacion)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                calificacion.IdCalificacion = id;
+                calificacion.IdUser = idUsuario;
+                await Functions.APIServiceCalificacion.CalificacionEdit(calificacion, id);
+
+                return RedirectToAction(nameof(ShowCalificacion));
+            }
+            return View(calificacion);
         }
 
-        public IActionResult ZonaReseñas()
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> DeleteCalificacion(int id)
         {
-            return View();
+
+            JR_DB.Calificacion calificacion = await Functions.APIServiceCalificacion.GetCalificacionByID(id);
+
+            if (calificacion == null)
+            {
+                return NotFound();
+            }
+
+            return View(calificacion);
         }
 
-        public IActionResult CreateReseña()
-        {
-            return View();
-        }
 
-        public IActionResult UpdateReseña()
+        [HttpPost, ActionName("DeleteGoal")]
+        [ValidateAntiForgeryToken]
+        [Authorize]
+        public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            return View();
-        }
+            if (id != 0)
+            {
+                await Functions.APIServiceCalificacion.CalificacionDelete(id);
+            }
 
-        public IActionResult Terms_Service()
-        {
-            return View();
-        }
 
-        public IActionResult Privacy_Policy()
-        {
-            return View();
+            return RedirectToAction(nameof(ShowCalificacion));
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

@@ -1,6 +1,6 @@
-﻿@model JR_DB.Goal;
+﻿@model JR_DB.Calificacion;
 @{
-    ViewData["Title"] = "EditGoal";
+    ViewData["Title"] = "DeleteCalificacion";
 }
 
 
@@ -11,37 +11,40 @@
             <div class="col-lg-12">
                 <div class="card">
                     <div class="header-title">
-                        <h4 class="card-title">Modificar Meta</h4>
+                        <h4 class="card-title">Eliminar rango de calificacion</h4>
                     </div>
                     <div class="card-body">
-                        <p class="text-danger">¿Seguro que desea eliminar la película?</p>
+                        <p class="text-danger">¿Seguro que desea eliminar la calificacion?</p>
                         <dl class="row">
                             <dt class="col-sm-2">
-                                @Html.DisplayNameFor(model => model.GoalBook)
+                                @Html.DisplayNameFor(model => model.LimiteSuperior)
                             </dt>
                             <dd class="col-sm-10">
-                                @Html.DisplayFor(model => model.GoalBook)
+                                @Html.DisplayFor(model => model.LimiteSuperior)
                             </dd>
                             <dt class="col-sm-2">
-                                @Html.DisplayNameFor(model => model.Progress)
+                                @Html.DisplayNameFor(model => model.LimiteInferior)
                             </dt>
                             <dd class="col-sm-10">
-                                @Html.DisplayFor(model => model.Progress)
+                                @Html.DisplayFor(model => model.LimiteInferior)
                             </dd>
                         </dl>
                     </div>
                     <div class="card-footer">
-                        <form asp-action="DeleteGoal">
-                            <input type="hidden" asp-for="IdGoal" />
-                            <input type="submit" value="Eliminar" class="btn btn-primary" />
+                        <form asp-action="DeleteCalificacion">
+                            <input type="hidden" asp-for="IdCalificacion" />
+                            <div class="col-md-6 col-lg-6 col-sm-12">
+                                <input type="submit" value="Eliminar" class="btn btn-primary" />
+                            </div>
                             <br />
-                            <a asp-action="ShowGoal" class="btn btn-primary">Regresar</a>
+                            <div class="col-md-6 col-lg-6 col-sm-12">
+                                <a asp-action="ShowCalificacion" class="btn btn-primary">Regresar</a>
+                            </div>
                         </form>
                     </div>
                     </div>
                 </div>
             </div>
-        </div>
     </section>
 
 </body>

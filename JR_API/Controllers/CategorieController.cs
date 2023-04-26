@@ -97,6 +97,7 @@ namespace JR_API.Controllers
             {
                 Models.CategorieBook newCategorieBook = new Models.CategorieBook
                 {
+                    IdCategorie = categoriebook.IdCategorie,
                     NameCategorie = categoriebook.NameCategorie,
                 };
 
