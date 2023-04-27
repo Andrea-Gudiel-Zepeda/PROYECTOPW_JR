@@ -19,7 +19,11 @@
                                             </div>
                                             <div class="row">
                                              <p class="mb-4"> Tu reto es: </p>
-                                             <h3> @Model.NombreReto </h3>
+                                             <dl>
+                                              <dd class="col-sm-10">
+                                                @Html.DisplayFor(model => model.NombreReto)
+                                              </dd>
+                                             </dl>
                                             </div>
                                         </div>
                                     </div>
@@ -35,27 +39,11 @@
                                       <div class="row">
                                         <div class="col-lg-4 banner-item">
                                             <p class="mb-4"> Aceptar el reto </p>
-                                            <form asp-action="CreateReto">
+                                            <form asp-action="ShowReto">
                                                 <div class="d-flex justify-content-center">
-                                                    <a asp-action="ObtenerReto" asp-route-data="@Model.NombreReto" class="btn btn-primary">Aceptar</a>
+                                                    <a asp-action="ShowReto" class="btn btn-primary">Aceptar</a>
                                                 </div>
                                             </form>
-                                        </div>
-                                        <div class="col-lg-4 banner-item">
-                                            <p class="mb-4"> Cancelar el reto </p>
-                                            <form asp-action="ShowReto">
-                                               <div class="d-flex justify-content-center">
-                                                    <a asp-action="ShowReto" class="btn btn-primary">Cancelar</a>  
-                                               </div>
-                                             </form>
-                                        </div>
-                                        <div class="col-lg-4 banner-item">
-                                            <p class="mb-4"> Cambiar de reto </p>
-                                             <form asp-action="ObtenerReto">
-                                                <div class="d-flex justify-content-center">
-                                                    <a asp-action="ObtenerReto"  class="btn btn-primary">Cambiar</a>
-                                                </div>
-                                             </form>
                                         </div>
                                       </div>
                                   </div>

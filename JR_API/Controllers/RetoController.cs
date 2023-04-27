@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using System.Xml.Linq;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 
 namespace JR_API.Controllers
 {
@@ -17,6 +19,7 @@ namespace JR_API.Controllers
             _context = new JrDbContext();
         }
 
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [Route("GetList")]
         [HttpGet]
         public async Task<IEnumerable<JR_DB.Reto>> GetList()
@@ -36,6 +39,7 @@ namespace JR_API.Controllers
         }
 
         //CREAR RETO
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [Route("Set")]
         [HttpPost]
         public async Task<JR_DB.GeneralResult> Set(JR_DB.Reto reto)
@@ -66,6 +70,7 @@ namespace JR_API.Controllers
         }
 
         //OBTNER POR ID
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [Route("GetByID/{id}")]
         [HttpGet]
         public async Task<ActionResult> GetByID(int id)
@@ -88,6 +93,7 @@ namespace JR_API.Controllers
         }
 
         //EDITAR RETO
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [Route("Edit/{id}")]
         [HttpPut]
         public async Task<ActionResult> Edit(int id, JR_DB.Reto reto)
@@ -118,6 +124,7 @@ namespace JR_API.Controllers
         }
 
         //ELIMINAR RETO
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [Route("Delete/{id}")]
         [HttpDelete]
         public async Task<ActionResult> Delete(int id)

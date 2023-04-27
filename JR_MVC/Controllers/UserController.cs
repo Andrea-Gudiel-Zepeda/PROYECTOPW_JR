@@ -35,8 +35,18 @@ namespace JR_MVC.Controllers
         [HttpPost]
         public async Task<IActionResult> SingIn(string email, string password)
         {
-            
-            IEnumerable<JR_DB.User> usuario = await Functions.APIServiceUser.UserGetList();
+            JR_DB.Tokens token = await Functions.APIServiceUser.Login(
+                new JR_DB.Tokens
+                {
+                    token = "asdkhfalskdjfhas"
+                });
+
+            if (string.IsNullOrEmpty(token.token))
+            {
+                return NotFound();
+            }
+
+            IEnumerable<JR_DB.User> usuario = await Functions.APIServiceUser.UserGetList(token.token);
 
             foreach (var us in usuario)
             {
@@ -85,7 +95,17 @@ namespace JR_MVC.Controllers
         [HttpPost]
         public async Task<IActionResult> SingUp([Bind("IdUser,FullName,LastName,Email,NumberPhone,Password")] JR_DB.User usuario)
         {
-            IEnumerable<JR_DB.User> usuarioslist = await Functions.APIServiceUser.UserGetList();
+            JR_DB.Tokens token = await Functions.APIServiceUser.Login(
+                new JR_DB.Tokens
+                {
+                    token = "asdkhfalskdjfhas"
+                });
+
+            if (string.IsNullOrEmpty(token.token))
+            {
+                return NotFound();
+            }
+            IEnumerable<JR_DB.User> usuarioslist = await Functions.APIServiceUser.UserGetList(token.token);
 
             foreach (var us in usuarioslist)
             {
@@ -97,7 +117,7 @@ namespace JR_MVC.Controllers
                 {
                     if (ModelState.IsValid)
                     {
-                        await Functions.APIServiceUser.UserSet(usuario);
+                        await Functions.APIServiceUser.UserSet(usuario, token.token);
                         return RedirectToAction(nameof(SingUp));
                     }
 
@@ -123,7 +143,17 @@ namespace JR_MVC.Controllers
             bool emailCorrecto = false;
             JR_DB.User NewUser = new JR_DB.User();
 
-            IEnumerable<JR_DB.User> usuario = await Functions.APIServiceUser.UserGetList();
+            JR_DB.Tokens token = await Functions.APIServiceUser.Login(
+                new JR_DB.Tokens
+                {
+                    token = "asdkhfalskdjfhas"
+                });
+
+            if (string.IsNullOrEmpty(token.token))
+            {
+                return NotFound();
+            }
+            IEnumerable<JR_DB.User> usuario = await Functions.APIServiceUser.UserGetList(token.token);
 
             foreach (var us in usuario)
             {
@@ -142,8 +172,7 @@ namespace JR_MVC.Controllers
             if (emailCorrecto)
             {
                 //cambiar la contraseña
-                NewUser.Password = newPassword;
-                await Functions.APIServiceUser.UserEdit(NewUser, NewUser.IdUser);
+                await Functions.APIServiceUser.UserEdit(NewUser, NewUser.IdUser, token.token);
                 return RedirectToAction(nameof(SingIn));
             }
             else
@@ -168,7 +197,18 @@ namespace JR_MVC.Controllers
         public async Task<IActionResult> User_Profile()
         {
             int idUsuario = Convert.ToInt32(User.Claims.FirstOrDefault(s => s.Type == "idUser")?.Value);
-            JR_DB.User user = await Functions.APIServiceUser.GetUserByID(idUsuario);
+            JR_DB.Tokens token = await Functions.APIServiceUser.Login(
+                new JR_DB.Tokens
+                {
+                    token = "asdkhfalskdjfhas"
+                });
+
+            if (string.IsNullOrEmpty(token.token))
+            {
+                return NotFound();
+            }
+
+            JR_DB.User user = await Functions.APIServiceUser.GetUserByID(idUsuario, token.token);
             
             return View(user);
         }
@@ -177,7 +217,18 @@ namespace JR_MVC.Controllers
         [Authorize]
         public async Task<IActionResult> EditUser(int id)
         {
-            JR_DB.User user = await Functions.APIServiceUser.GetUserByID(id);
+            JR_DB.Tokens token = await Functions.APIServiceUser.Login(
+                new JR_DB.Tokens
+                {
+                    token = "asdkhfalskdjfhas"
+                });
+
+            if (string.IsNullOrEmpty(token.token))
+            {
+                return NotFound();
+            }
+
+            JR_DB.User user = await Functions.APIServiceUser.GetUserByID(id, token.token);
 
             return View(user);
         }
@@ -194,7 +245,18 @@ namespace JR_MVC.Controllers
 
             if (ModelState.IsValid)
             {
-                await Functions.APIServiceUser.UserEdit(usuario, id);
+                JR_DB.Tokens token = await Functions.APIServiceUser.Login(
+                new JR_DB.Tokens
+                {
+                    token = "asdkhfalskdjfhas"
+                });
+
+                if (string.IsNullOrEmpty(token.token))
+                {
+                    return NotFound();
+                }
+
+                await Functions.APIServiceUser.UserEdit(usuario, id, token.token);
 
                 return RedirectToAction(nameof(User_Profile));
             }
@@ -205,8 +267,18 @@ namespace JR_MVC.Controllers
         [Authorize]
         public async Task<IActionResult> DeleteUser(int id)
         {
+            JR_DB.Tokens token = await Functions.APIServiceUser.Login(
+                new JR_DB.Tokens
+                {
+                    token = "asdkhfalskdjfhas"
+                });
 
-            JR_DB.User usuario = await Functions.APIServiceUser.GetUserByID(id);
+            if (string.IsNullOrEmpty(token.token))
+            {
+                return NotFound();
+            }
+
+            JR_DB.User usuario = await Functions.APIServiceUser.GetUserByID(id, token.token);
 
             if (usuario == null)
             {
@@ -224,7 +296,18 @@ namespace JR_MVC.Controllers
         {
             if (id != 0)
             {
-                await Functions.APIServiceUser.UserDelete(id);
+                JR_DB.Tokens token = await Functions.APIServiceUser.Login(
+                new JR_DB.Tokens
+                {
+                    token = "asdkhfalskdjfhas"
+                });
+
+                if (string.IsNullOrEmpty(token.token))
+                {
+                    return NotFound();
+                }
+
+                await Functions.APIServiceUser.UserDelete(id, token.token);
             }
 
 

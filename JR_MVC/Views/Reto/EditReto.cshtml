@@ -1,0 +1,62 @@
+﻿@model JR_DB.Reto
+
+@{
+    ViewData["Title"] = "EditReto";
+}
+
+
+<body class=" " data-bs-spy="scroll" data-bs-target="#elements-section" data-bs-offset="0" tabindex="0">
+
+    <section class="section">
+        <div class="row">
+            <div class="col-lg-12">
+
+                <div class="card">
+                    <div class="header-title">
+                        <h4 class="card-title">Modificar Reto</h4>
+                    </div>
+                    <div class="card-body">
+                        <form asp-action="EditReto">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <input type="hidden" asp-for="IdReto" />
+                        <div class="row">
+                            <div class="col-md-6 col-lg-6 col-sm-12">
+                                 <label asp-for="NombreReto" class="control-label"></label>
+                                    <input asp-for="NombreReto" class="form-control" />
+                                    <span asp-validation-for="NombreReto" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6 col-lg-6 col-sm-12">
+                                 <label asp-for="Status" class="control-label"></label>
+                                    <input asp-for="Status" class="form-control" />
+                                    <span asp-validation-for="Status" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 col-lg-6 col-sm-12">
+                                 <label asp-for="DateStart" class="control-label"></label>
+                                    <input asp-for="DateStart" type="date" class="form-control" />
+                                    <span asp-validation-for="DateStart" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6 col-lg-6 col-sm-12">
+                                     <label asp-for="DateEnd" class="control-label"></label>
+                                       <input asp-for="DateEnd"  type="date" class="form-control" />
+                                       <span asp-validation-for="DateEnd" class="text-danger"></span>
+                            </div>
+                        </div>
+                            <input type="hidden" asp-for="IdUser" />
+                            <div class="d-flex justify-content-center">
+                                <div class="col-md-6 col-lg-6 col-sm-12">
+                                    <button type="submit" class="btn btn-primary">Grabar</button>
+                                </div>
+                                <div class="col-md-6 col-lg-6 col-sm-12">
+                                    <a asp-action="ShowReto" class="btn btn-primary">Regresar</a>
+                                </div>
+                            </div>
+                      </form> 
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</body>

@@ -19,7 +19,19 @@ namespace JR_MVC.Controllers
         [Authorize]
         public async Task<IActionResult> ShowCalificacion()
         {
-            IEnumerable<JR_DB.Calificacion> calificaciones = await Functions.APIServiceCalificacion.CalificacionGetList();
+
+            JR_DB.Tokens token = await Functions.APIServiceUser.Login(
+            new JR_DB.Tokens
+            {
+                token = "asdkhfalskdjfhas"
+            });
+
+            if (string.IsNullOrEmpty(token.token))
+            {
+                return NotFound();
+            }
+
+            IEnumerable<JR_DB.Calificacion> calificaciones = await Functions.APIServiceCalificacion.CalificacionGetList(token.token);
             
             int idUsuario = Convert.ToInt32(User.Claims.FirstOrDefault(s => s.Type == "idUser")?.Value);
             
@@ -60,7 +72,18 @@ namespace JR_MVC.Controllers
         [Authorize]
         public async Task<IActionResult> CreateCalificacion([Bind("IdCalificacion, LimiteInferior, LimiteSuperior, IdUser")] JR_DB.Calificacion calificacion)
         {
-            IEnumerable<JR_DB.Calificacion> calificaciones = await Functions.APIServiceCalificacion.CalificacionGetList();
+
+            JR_DB.Tokens token = await Functions.APIServiceUser.Login(
+            new JR_DB.Tokens
+            {
+                token = "asdkhfalskdjfhas"
+            });
+
+            if (string.IsNullOrEmpty(token.token))
+            {
+                return NotFound();
+            }
+            IEnumerable<JR_DB.Calificacion> calificaciones = await Functions.APIServiceCalificacion.CalificacionGetList(token.token);
             int idUsuario = Convert.ToInt32(User.Claims.FirstOrDefault(s => s.Type == "idUser")?.Value);
             bool encontrado = false;
 
@@ -83,7 +106,7 @@ namespace JR_MVC.Controllers
                 if (ModelState.IsValid)
                 {
                     calificacion.IdUser = idUsuario;
-                    await Functions.APIServiceCalificacion.CalificacionSet(calificacion);
+                    await Functions.APIServiceCalificacion.CalificacionSet(calificacion, token.token);
                     return RedirectToAction("ShowCalificacion", "Calificacion");
                 }
             }
@@ -96,7 +119,19 @@ namespace JR_MVC.Controllers
         [Authorize]
         public async Task<IActionResult> EditCalificacion(int id)
         {
-            JR_DB.Calificacion calificacion = await Functions.APIServiceCalificacion.GetCalificacionByID(id);
+
+            JR_DB.Tokens token = await Functions.APIServiceUser.Login(
+            new JR_DB.Tokens
+            {
+                token = "asdkhfalskdjfhas"
+            });
+
+            if (string.IsNullOrEmpty(token.token))
+            {
+                return NotFound();
+            }
+
+            JR_DB.Calificacion calificacion = await Functions.APIServiceCalificacion.GetCalificacionByID(id, token.token);
 
             return View(calificacion);
         }
@@ -105,6 +140,18 @@ namespace JR_MVC.Controllers
         [Authorize]
         public async Task<IActionResult> EditCalificacion(int id, [Bind("IdCalificacion, LimiteInferior, LimiteSuperior, IdUser")] JR_DB.Calificacion calificacion)
         {
+
+            JR_DB.Tokens token = await Functions.APIServiceUser.Login(
+            new JR_DB.Tokens
+            {
+                token = "asdkhfalskdjfhas"
+            });
+
+            if (string.IsNullOrEmpty(token.token))
+            {
+                return NotFound();
+            }
+
             int idUsuario = Convert.ToInt32(User.Claims.FirstOrDefault(s => s.Type == "idUser")?.Value);
             if (id != calificacion.IdCalificacion)
             {
@@ -115,7 +162,7 @@ namespace JR_MVC.Controllers
             {
                 calificacion.IdCalificacion = id;
                 calificacion.IdUser = idUsuario;
-                await Functions.APIServiceCalificacion.CalificacionEdit(calificacion, id);
+                await Functions.APIServiceCalificacion.CalificacionEdit(calificacion, id, token.token);
 
                 return RedirectToAction(nameof(ShowCalificacion));
             }
@@ -127,7 +174,18 @@ namespace JR_MVC.Controllers
         public async Task<IActionResult> DeleteCalificacion(int id)
         {
 
-            JR_DB.Calificacion calificacion = await Functions.APIServiceCalificacion.GetCalificacionByID(id);
+            JR_DB.Tokens token = await Functions.APIServiceUser.Login(
+            new JR_DB.Tokens
+            {
+                token = "asdkhfalskdjfhas"
+            });
+
+            if (string.IsNullOrEmpty(token.token))
+            {
+                return NotFound();
+            }
+
+            JR_DB.Calificacion calificacion = await Functions.APIServiceCalificacion.GetCalificacionByID(id, token.token);
 
             if (calificacion == null)
             {
@@ -143,9 +201,21 @@ namespace JR_MVC.Controllers
         [Authorize]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+
+            JR_DB.Tokens token = await Functions.APIServiceUser.Login(
+            new JR_DB.Tokens
+            {
+                token = "asdkhfalskdjfhas"
+            });
+
+            if (string.IsNullOrEmpty(token.token))
+            {
+                return NotFound();
+            }
+
             if (id != 0)
             {
-                await Functions.APIServiceCalificacion.CalificacionDelete(id);
+                await Functions.APIServiceCalificacion.CalificacionDelete(id, token.token);
             }
 
 

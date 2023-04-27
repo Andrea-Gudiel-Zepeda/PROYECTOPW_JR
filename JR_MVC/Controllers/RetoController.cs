@@ -1,4 +1,5 @@
-﻿using JR_MVC.Models;
+﻿using Google.Protobuf.WellKnownTypes;
+using JR_MVC.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections;
@@ -21,7 +22,17 @@ namespace JR_MVC.Controllers
         public async Task<IActionResult> ShowReto()
         {
             int idUsuario = Convert.ToInt32(User.Claims.FirstOrDefault(s => s.Type == "idUser")?.Value);
-            IEnumerable<JR_DB.Reto> retos = await Functions.APIServiceReto.RetoGetList();
+            JR_DB.Tokens token = await Functions.APIServiceUser.Login(
+                new JR_DB.Tokens
+                {
+                    token = "asdkhfalskdjfhas"
+                });
+
+            if (string.IsNullOrEmpty(token.token))
+            {
+                return NotFound();
+            }
+            IEnumerable<JR_DB.Reto> retos = await Functions.APIServiceReto.RetoGetList(token.token);
             List<JR_DB.Reto> retos_ls = new List<JR_DB.Reto>();
 
             foreach (var rt in retos)
@@ -44,43 +55,52 @@ namespace JR_MVC.Controllers
             RetosAleatorios metodoretos = new RetosAleatorios();
             string reto = metodoretos.TuReto();
             JR_DB.Reto retoaleatorio = new JR_DB.Reto();
-            retoaleatorio.IdReto = 0;
             retoaleatorio.NombreReto = reto;
             retoaleatorio.IdUser = idUsuario;
+            retoaleatorio.DateStart = DateTime.Today.Date;
+            retoaleatorio.Status = "En Proceso";
+            JR_DB.Tokens token = await Functions.APIServiceUser.Login(
+                new JR_DB.Tokens
+                {
+                    token = "asdkhfalskdjfhas"
+                });
+
+            if (string.IsNullOrEmpty(token.token))
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+                  {
+                      await Functions.APIServiceReto.RetoSet(retoaleatorio,token.token);
+
+                  }
             return View(retoaleatorio);
         }
 
-        [HttpGet]
-        [Authorize]
-        public async Task<IActionResult> ObtenerReto(string reto)
-        {
-            int idUsuario = Convert.ToInt32(User.Claims.FirstOrDefault(s => s.Type == "idUser")?.Value);
-            //validar calificacion
-           /* reto.IdUser = idUsuario;
-            reto.DateStart = Convert.ToDateTime(DateTime.Now.Date);
-            reto.Status = "En Proceso";
-
-                 if (ModelState.IsValid)
-                 {
-                     await Functions.APIServiceReto.RetoSet(reto);
-                    
-                 }*/
-            
-            return RedirectToAction(nameof(ShowReto));
-        }
 
         [HttpGet]
         [Authorize]
         public async Task<IActionResult> EditReto(int id)
         {
-            JR_DB.Reto reto = await Functions.APIServiceReto.GetRetoByID(id);
+            JR_DB.Tokens token = await Functions.APIServiceUser.Login(
+                new JR_DB.Tokens
+                {
+                    token = "asdkhfalskdjfhas"
+                });
+
+            if (string.IsNullOrEmpty(token.token))
+            {
+                return NotFound();
+            }
+            JR_DB.Reto reto = await Functions.APIServiceReto.GetRetoByID(id, token.token);
 
             return View(reto);
         }
 
         [HttpPost]
         [Authorize]
-        public async Task<IActionResult> EditReseña(int id, [Bind("IdReto,NombreReto,Status,DateStart,DateEnd,IdUser")] JR_DB.Reto reto)
+        public async Task<IActionResult> EditReto(int id, [Bind("IdReto,NombreReto,Status,DateStart,DateEnd,IdUser")] JR_DB.Reto reto)
         {
             int idUsuario = Convert.ToInt32(User.Claims.FirstOrDefault(s => s.Type == "idUser")?.Value);
             if (id != reto.IdReto)
@@ -88,9 +108,20 @@ namespace JR_MVC.Controllers
                 return NotFound();
             }
 
+            JR_DB.Tokens token = await Functions.APIServiceUser.Login(
+                new JR_DB.Tokens
+                {
+                    token = "asdkhfalskdjfhas"
+                });
+
+            if (string.IsNullOrEmpty(token.token))
+            {
+                return NotFound();
+            }
+
             if (ModelState.IsValid)
             {
-                await Functions.APIServiceReto.RetoEdit(reto, id);
+                await Functions.APIServiceReto.RetoEdit(reto, id, token.token);
                 return RedirectToAction(nameof(ShowReto));
 
             }
@@ -101,8 +132,17 @@ namespace JR_MVC.Controllers
         [Authorize]
         public async Task<IActionResult> DeleteReto(int id)
         {
+            JR_DB.Tokens token = await Functions.APIServiceUser.Login(
+                new JR_DB.Tokens
+                {
+                    token = "asdkhfalskdjfhas"
+                });
 
-            JR_DB.Reto reto = await Functions.APIServiceReto.GetRetoByID(id);
+            if (string.IsNullOrEmpty(token.token))
+            {
+                return NotFound();
+            }
+            JR_DB.Reto reto = await Functions.APIServiceReto.GetRetoByID(id, token.token);
 
 
             return View(reto);
@@ -114,9 +154,20 @@ namespace JR_MVC.Controllers
         [Authorize]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            JR_DB.Tokens token = await Functions.APIServiceUser.Login(
+            new JR_DB.Tokens
+            {
+                token = "asdkhfalskdjfhas"
+            });
+
+            if (string.IsNullOrEmpty(token.token))
+            {
+                return NotFound();
+            }
+
             if (id != 0)
             {
-                await Functions.APIServiceReto.RetoDelete(id);
+                await Functions.APIServiceReto.RetoDelete(id, token.token);
             }
 
 

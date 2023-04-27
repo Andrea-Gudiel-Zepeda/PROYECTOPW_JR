@@ -22,8 +22,20 @@ namespace JR_MVC.Controllers
         [Authorize]
         public async Task<IActionResult> ShowGoal()
         {
-            IEnumerable<JR_DB.Goal> goals = await Functions.APIServiceGoal.GoalGetList();
-            IEnumerable<JR_DB.Book> books = await Functions.APIServiceBook.BookGetList();
+
+            JR_DB.Tokens token = await Functions.APIServiceUser.Login(
+            new JR_DB.Tokens
+            {
+                token = "asdkhfalskdjfhas"
+            });
+
+            if (string.IsNullOrEmpty(token.token))
+            {
+                return NotFound();
+            }
+
+            IEnumerable<JR_DB.Goal> goals = await Functions.APIServiceGoal.GoalGetList(token.token);
+            IEnumerable<JR_DB.Book> books = await Functions.APIServiceBook.BookGetList(token.token);
             int idUsuario = Convert.ToInt32(User.Claims.FirstOrDefault(s => s.Type == "idUser")?.Value);
             int contadorlibros = 0;
             JR_DB.Goal goalUser = new JR_DB.Goal();
@@ -51,7 +63,7 @@ namespace JR_MVC.Controllers
             if (encontrado)
             {
                 goalUser.Progress = (contadorlibros * 100) / goalUser.GoalBook;
-                await Functions.APIServiceGoal.GoalEdit(goalUser, goalUser.IdGoal);
+                await Functions.APIServiceGoal.GoalEdit(goalUser, goalUser.IdGoal, token.token);
                 return View(goalUser);
             }
             else
@@ -72,7 +84,19 @@ namespace JR_MVC.Controllers
         [Authorize]
         public async Task<IActionResult> CreateGoal([Bind("IdGoal,GoalBook, Progress, idUser")] JR_DB.Goal goal)
         {
-            IEnumerable<JR_DB.Goal> goals = await Functions.APIServiceGoal.GoalGetList();
+
+            JR_DB.Tokens token = await Functions.APIServiceUser.Login(
+            new JR_DB.Tokens
+            {
+                token = "asdkhfalskdjfhas"
+            });
+
+            if (string.IsNullOrEmpty(token.token))
+            {
+                return NotFound();
+            }
+
+            IEnumerable<JR_DB.Goal> goals = await Functions.APIServiceGoal.GoalGetList(token.token);
             bool encontrado = false;
             int idUsuario = Convert.ToInt32(User.Claims.FirstOrDefault(s => s.Type == "idUser")?.Value);
             foreach (var gl in goals)
@@ -94,7 +118,7 @@ namespace JR_MVC.Controllers
                 if (ModelState.IsValid)
                 {
                     goal.IdUser = idUsuario;
-                    await Functions.APIServiceGoal.GoalSet(goal);
+                    await Functions.APIServiceGoal.GoalSet(goal, token.token);
                     return RedirectToAction("ShowGoal", "Goal");
                 }
             }
@@ -106,7 +130,19 @@ namespace JR_MVC.Controllers
         [Authorize]
         public async Task<IActionResult> EditGoal(int id)
         {
-            JR_DB.Goal goal = await Functions.APIServiceGoal.GetGoalByID(id);
+
+            JR_DB.Tokens token = await Functions.APIServiceUser.Login(
+            new JR_DB.Tokens
+            {
+                token = "asdkhfalskdjfhas"
+            });
+
+            if (string.IsNullOrEmpty(token.token))
+            {
+                return NotFound();
+            }
+
+            JR_DB.Goal goal = await Functions.APIServiceGoal.GetGoalByID(id, token.token);
             
             return View(goal);
         }
@@ -116,6 +152,18 @@ namespace JR_MVC.Controllers
         public async Task<IActionResult> EditGoal(int id, [Bind("IdGoal,GoalBook, Progress, idUser")] JR_DB.Goal goal)
         {
             int idUsuario = Convert.ToInt32(User.Claims.FirstOrDefault(s => s.Type == "idUser")?.Value);
+
+            JR_DB.Tokens token = await Functions.APIServiceUser.Login(
+            new JR_DB.Tokens
+            {
+                token = "asdkhfalskdjfhas"
+            });
+
+            if (string.IsNullOrEmpty(token.token))
+            {
+                return NotFound();
+            }
+
             if (id != goal.IdGoal)
             {
                 return NotFound();
@@ -125,7 +173,7 @@ namespace JR_MVC.Controllers
             {
                 goal.IdGoal = id;
                 goal.IdUser = idUsuario;
-                await Functions.APIServiceGoal.GoalEdit(goal, id);
+                await Functions.APIServiceGoal.GoalEdit(goal, id,token.token);
               
                 return RedirectToAction(nameof(ShowGoal));
             }
@@ -137,7 +185,18 @@ namespace JR_MVC.Controllers
         public async Task<IActionResult> DeleteGoal(int id)
         {
 
-            JR_DB.Goal goal = await Functions.APIServiceGoal.GetGoalByID(id);
+            JR_DB.Tokens token = await Functions.APIServiceUser.Login(
+            new JR_DB.Tokens
+            {
+                token = "asdkhfalskdjfhas"
+            });
+
+            if (string.IsNullOrEmpty(token.token))
+            {
+                return NotFound();
+            }
+
+            JR_DB.Goal goal = await Functions.APIServiceGoal.GetGoalByID(id, token.token);
 
             if (goal == null)
             {
@@ -153,9 +212,21 @@ namespace JR_MVC.Controllers
         [Authorize]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+
+            JR_DB.Tokens token = await Functions.APIServiceUser.Login(
+            new JR_DB.Tokens
+            {
+                token = "asdkhfalskdjfhas"
+            });
+
+            if (string.IsNullOrEmpty(token.token))
+            {
+                return NotFound();
+            }
+
             if (id != 0)
             {
-                await Functions.APIServiceGoal.GoalDelete(id);
+                await Functions.APIServiceGoal.GoalDelete(id, token.token);
             }
 
             

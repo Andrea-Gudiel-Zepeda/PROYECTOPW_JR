@@ -24,9 +24,21 @@ namespace JR_MVC.Controllers
         [Authorize]
         public async Task<IActionResult> Read_List()
         {
+
+            JR_DB.Tokens token = await Functions.APIServiceUser.Login(
+            new JR_DB.Tokens
+            {
+                token = "asdkhfalskdjfhas"
+            });
+
+            if (string.IsNullOrEmpty(token.token))
+            {
+                return NotFound();
+            }
+
             int idUsuario = Convert.ToInt32(User.Claims.FirstOrDefault(s => s.Type == "idUser")?.Value);
             int idCategorie = 1;
-            IEnumerable<JR_DB.Book> books = await Functions.APIServiceBook.GetListByCategorie(idCategorie);
+            IEnumerable<JR_DB.Book> books = await Functions.APIServiceBook.GetListByCategorie(idCategorie, token.token);
             List<JR_DB.Book> books_ls = new List<JR_DB.Book>();
 
             foreach(var bk in books)
@@ -51,10 +63,22 @@ namespace JR_MVC.Controllers
         [Authorize]
         public async Task<IActionResult> CreateBook_Read([Bind("IdBook,NameBook,AuthorBook,BookPublish,DateBook,Calificacion")] JR_DB.Book book)
         {
+
+            JR_DB.Tokens token = await Functions.APIServiceUser.Login(
+            new JR_DB.Tokens
+            {
+                token = "asdkhfalskdjfhas"
+            });
+
+            if (string.IsNullOrEmpty(token.token))
+            {
+                return NotFound();
+            }
+
             int idUsuario = Convert.ToInt32(User.Claims.FirstOrDefault(s => s.Type == "idUser")?.Value);
             bool calificacionEncontrada = false;
             //validar calificacion
-            IEnumerable<JR_DB.Calificacion> calificaciones = await Functions.APIServiceCalificacion.CalificacionGetList();
+            IEnumerable<JR_DB.Calificacion> calificaciones = await Functions.APIServiceCalificacion.CalificacionGetList(token.token);
             foreach (var cl in calificaciones)
             {
                 if (cl.IdUser == idUsuario)
@@ -66,7 +90,7 @@ namespace JR_MVC.Controllers
                         book.IdUser = idUsuario;
                         if (ModelState.IsValid)
                         {
-                            await Functions.APIServiceBook.BookSet(book);
+                            await Functions.APIServiceBook.BookSet(book, token.token);
                             return RedirectToAction(nameof(Read_List));
                         }
                     }
@@ -92,7 +116,17 @@ namespace JR_MVC.Controllers
         [Authorize]
         public async Task<IActionResult> EditBookR(int id)
         {
-            JR_DB.Book book = await Functions.APIServiceBook.GetBookByID(id);
+            JR_DB.Tokens token = await Functions.APIServiceUser.Login(
+            new JR_DB.Tokens
+            {
+                token = "asdkhfalskdjfhas"
+            });
+
+            if (string.IsNullOrEmpty(token.token))
+            {
+                return NotFound();
+            }
+            JR_DB.Book book = await Functions.APIServiceBook.GetBookByID(id, token.token);
 
             return View(book);
         }
@@ -101,6 +135,18 @@ namespace JR_MVC.Controllers
         [Authorize]
         public async Task<IActionResult> EditBookR(int id, [Bind("IdBook,NameBook,AuthorBook,BookPublish,DateBook,Calificacion,IdCategorie,IdUser")] JR_DB.Book book)
         {
+
+            JR_DB.Tokens token = await Functions.APIServiceUser.Login(
+            new JR_DB.Tokens
+            {
+                token = "asdkhfalskdjfhas"
+            });
+
+            if (string.IsNullOrEmpty(token.token))
+            {
+                return NotFound();
+            }
+
             int idUsuario = Convert.ToInt32(User.Claims.FirstOrDefault(s => s.Type == "idUser")?.Value);
             if (id != book.IdBook)
             {
@@ -109,7 +155,7 @@ namespace JR_MVC.Controllers
 
             if (ModelState.IsValid)
             {
-                await Functions.APIServiceBook.BookEdit(book, id);
+                await Functions.APIServiceBook.BookEdit(book, id, token.token);
                 return RedirectToAction(nameof(Read_List));
                 
             }
@@ -121,7 +167,18 @@ namespace JR_MVC.Controllers
         public async Task<IActionResult> DeleteBookR(int id)
         {
 
-            JR_DB.Book book = await Functions.APIServiceBook.GetBookByID(id);
+            JR_DB.Tokens token = await Functions.APIServiceUser.Login(
+            new JR_DB.Tokens
+            {
+                token = "asdkhfalskdjfhas"
+            });
+
+            if (string.IsNullOrEmpty(token.token))
+            {
+                return NotFound();
+            }
+
+            JR_DB.Book book = await Functions.APIServiceBook.GetBookByID(id, token.token);
 
 
             return View(book);
@@ -133,9 +190,21 @@ namespace JR_MVC.Controllers
         [Authorize]
         public async Task<IActionResult> DeleteConfirmedR(int id)
         {
+
+            JR_DB.Tokens token = await Functions.APIServiceUser.Login(
+            new JR_DB.Tokens
+            {
+                token = "asdkhfalskdjfhas"
+            });
+
+            if (string.IsNullOrEmpty(token.token))
+            {
+                return NotFound();
+            }
+
             if (id != 0)
             {
-                await Functions.APIServiceBook.BookDelete(id);
+                await Functions.APIServiceBook.BookDelete(id, token.token);
             }
 
 
@@ -148,9 +217,21 @@ namespace JR_MVC.Controllers
         [Authorize]
         public async Task<IActionResult> ToDo_List()
         {
+
+            JR_DB.Tokens token = await Functions.APIServiceUser.Login(
+            new JR_DB.Tokens
+            {
+                token = "asdkhfalskdjfhas"
+            });
+
+            if (string.IsNullOrEmpty(token.token))
+            {
+                return NotFound();
+            }
+
             int idUsuario = Convert.ToInt32(User.Claims.FirstOrDefault(s => s.Type == "idUser")?.Value);
             int idCategorie = 2;
-            IEnumerable<JR_DB.Book> books = await Functions.APIServiceBook.GetListByCategorie(idCategorie);
+            IEnumerable<JR_DB.Book> books = await Functions.APIServiceBook.GetListByCategorie(idCategorie, token.token);
             List<JR_DB.Book> books_ls = new List<JR_DB.Book>();
 
             foreach (var bk in books)
@@ -175,13 +256,25 @@ namespace JR_MVC.Controllers
         [Authorize]
         public async Task<IActionResult> CreateBook_ToDo([Bind("IdBook,NameBook,AuthorBook,BookPublish,DateBook,Calificacion")] JR_DB.Book book)
         {
+
+            JR_DB.Tokens token = await Functions.APIServiceUser.Login(
+            new JR_DB.Tokens
+            {
+                token = "asdkhfalskdjfhas"
+            });
+
+            if (string.IsNullOrEmpty(token.token))
+            {
+                return NotFound();
+            }
+
             int idUsuario = Convert.ToInt32(User.Claims.FirstOrDefault(s => s.Type == "idUser")?.Value);
                         book.Calificacion = 0;
                         book.IdCategorie = 2;
                         book.IdUser = idUsuario;
                         if (ModelState.IsValid)
                         {
-                            await Functions.APIServiceBook.BookSet(book);
+                            await Functions.APIServiceBook.BookSet(book, token.token);
                             return RedirectToAction(nameof(ToDo_List));
                         }
                     
@@ -194,7 +287,19 @@ namespace JR_MVC.Controllers
         [Authorize]
         public async Task<IActionResult> EditBookP(int id)
         {
-            JR_DB.Book book = await Functions.APIServiceBook.GetBookByID(id);
+
+            JR_DB.Tokens token = await Functions.APIServiceUser.Login(
+            new JR_DB.Tokens
+            {
+                token = "asdkhfalskdjfhas"
+            });
+
+            if (string.IsNullOrEmpty(token.token))
+            {
+                return NotFound();
+            }
+
+            JR_DB.Book book = await Functions.APIServiceBook.GetBookByID(id, token.token);
 
             return View(book);
         }
@@ -203,6 +308,18 @@ namespace JR_MVC.Controllers
         [Authorize]
         public async Task<IActionResult> EditBookP(int id, [Bind("IdBook,NameBook,AuthorBook,BookPublish,DateBook,Calificacion,IdCategorie,IdUser")] JR_DB.Book book)
         {
+
+            JR_DB.Tokens token = await Functions.APIServiceUser.Login(
+            new JR_DB.Tokens
+            {
+                token = "asdkhfalskdjfhas"
+            });
+
+            if (string.IsNullOrEmpty(token.token))
+            {
+                return NotFound();
+            }
+
             int idUsuario = Convert.ToInt32(User.Claims.FirstOrDefault(s => s.Type == "idUser")?.Value);
             if (id != book.IdBook)
             {
@@ -211,7 +328,7 @@ namespace JR_MVC.Controllers
 
             if (ModelState.IsValid)
             {
-                await Functions.APIServiceBook.BookEdit(book, id);
+                await Functions.APIServiceBook.BookEdit(book, id, token.token);
                 return RedirectToAction(nameof(ToDo_List));
 
             }
@@ -223,7 +340,17 @@ namespace JR_MVC.Controllers
         public async Task<IActionResult> DeleteBookP(int id)
         {
 
-            JR_DB.Book book = await Functions.APIServiceBook.GetBookByID(id);
+            JR_DB.Tokens token = await Functions.APIServiceUser.Login(
+            new JR_DB.Tokens
+            {
+                token = "asdkhfalskdjfhas"
+            });
+
+            if (string.IsNullOrEmpty(token.token))
+            {
+                return NotFound();
+            }
+            JR_DB.Book book = await Functions.APIServiceBook.GetBookByID(id, token.token);
 
 
             return View(book);
@@ -235,9 +362,21 @@ namespace JR_MVC.Controllers
         [Authorize]
         public async Task<IActionResult> DeleteConfirmedP(int id)
         {
+
+            JR_DB.Tokens token = await Functions.APIServiceUser.Login(
+            new JR_DB.Tokens
+            {
+                token = "asdkhfalskdjfhas"
+            });
+
+            if (string.IsNullOrEmpty(token.token))
+            {
+                return NotFound();
+            }
+
             if (id != 0)
             {
-                await Functions.APIServiceBook.BookDelete(id);
+                await Functions.APIServiceBook.BookDelete(id, token.token);
             }
 
 
@@ -249,9 +388,21 @@ namespace JR_MVC.Controllers
         [Authorize]
         public async Task<IActionResult> Buy_List()
         {
+
+            JR_DB.Tokens token = await Functions.APIServiceUser.Login(
+            new JR_DB.Tokens
+            {
+                token = "asdkhfalskdjfhas"
+            });
+
+            if (string.IsNullOrEmpty(token.token))
+            {
+                return NotFound();
+            }
+
             int idUsuario = Convert.ToInt32(User.Claims.FirstOrDefault(s => s.Type == "idUser")?.Value);
             int idCategorie = 3;
-            IEnumerable<JR_DB.Book> books = await Functions.APIServiceBook.GetListByCategorie(idCategorie);
+            IEnumerable<JR_DB.Book> books = await Functions.APIServiceBook.GetListByCategorie(idCategorie, token.token);
             List<JR_DB.Book> books_ls = new List<JR_DB.Book>();
 
             foreach (var bk in books)
@@ -276,6 +427,18 @@ namespace JR_MVC.Controllers
         [Authorize]
         public async Task<IActionResult> CreateBook_Buy([Bind("IdBook,NameBook,AuthorBook,BookPublish,DateBook,Calificacion")] JR_DB.Book book)
         {
+
+            JR_DB.Tokens token = await Functions.APIServiceUser.Login(
+            new JR_DB.Tokens
+            {
+                token = "asdkhfalskdjfhas"
+            });
+
+            if (string.IsNullOrEmpty(token.token))
+            {
+                return NotFound();
+            }
+
             int idUsuario = Convert.ToInt32(User.Claims.FirstOrDefault(s => s.Type == "idUser")?.Value);
             
                book.Calificacion = 0;
@@ -283,7 +446,7 @@ namespace JR_MVC.Controllers
                         book.IdUser = idUsuario;
                         if (ModelState.IsValid)
                         {
-                            await Functions.APIServiceBook.BookSet(book);
+                            await Functions.APIServiceBook.BookSet(book, token.token);
                             return RedirectToAction(nameof(Buy_List));
                         }
                   
@@ -295,7 +458,19 @@ namespace JR_MVC.Controllers
         [Authorize]
         public async Task<IActionResult> EditBookB(int id)
         {
-            JR_DB.Book book = await Functions.APIServiceBook.GetBookByID(id);
+
+            JR_DB.Tokens token = await Functions.APIServiceUser.Login(
+            new JR_DB.Tokens
+            {
+                token = "asdkhfalskdjfhas"
+            });
+
+            if (string.IsNullOrEmpty(token.token))
+            {
+                return NotFound();
+            }
+
+            JR_DB.Book book = await Functions.APIServiceBook.GetBookByID(id, token.token);
 
             return View(book);
         }
@@ -304,6 +479,18 @@ namespace JR_MVC.Controllers
         [Authorize]
         public async Task<IActionResult> EditBookB(int id, [Bind("IdBook,NameBook,AuthorBook,BookPublish,DateBook,Calificacion,IdCategorie,IdUser")] JR_DB.Book book)
         {
+
+            JR_DB.Tokens token = await Functions.APIServiceUser.Login(
+            new JR_DB.Tokens
+            {
+                token = "asdkhfalskdjfhas"
+            });
+
+            if (string.IsNullOrEmpty(token.token))
+            {
+                return NotFound();
+            }
+
             int idUsuario = Convert.ToInt32(User.Claims.FirstOrDefault(s => s.Type == "idUser")?.Value);
             if (id != book.IdBook)
             {
@@ -312,7 +499,7 @@ namespace JR_MVC.Controllers
 
             if (ModelState.IsValid)
             {
-                await Functions.APIServiceBook.BookEdit(book, id);
+                await Functions.APIServiceBook.BookEdit(book, id, token.token);
                 return RedirectToAction(nameof(Buy_List));
 
             }
@@ -324,7 +511,12 @@ namespace JR_MVC.Controllers
         public async Task<IActionResult> DeleteBookB(int id)
         {
 
-            JR_DB.Book book = await Functions.APIServiceBook.GetBookByID(id);
+            JR_DB.Tokens token = await Functions.APIServiceUser.Login(new JR_DB.Tokens { token = "asdkhfalskdjfhas" });
+            if (string.IsNullOrEmpty(token.token))
+            {
+                return NotFound();
+            }
+            JR_DB.Book book = await Functions.APIServiceBook.GetBookByID(id, token.token);
 
 
             return View(book);
@@ -336,9 +528,21 @@ namespace JR_MVC.Controllers
         [Authorize]
         public async Task<IActionResult> DeleteConfirmedB(int id)
         {
+
+            JR_DB.Tokens token = await Functions.APIServiceUser.Login(
+            new JR_DB.Tokens
+            {
+                token = "asdkhfalskdjfhas"
+            });
+
+            if (string.IsNullOrEmpty(token.token))
+            {
+                return NotFound();
+            }
+
             if (id != 0)
             {
-                await Functions.APIServiceBook.BookDelete(id);
+                await Functions.APIServiceBook.BookDelete(id, token.token);
             }
 
 

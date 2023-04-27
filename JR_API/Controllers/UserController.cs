@@ -1,6 +1,8 @@
 ﻿using JR_API.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using System.Xml.Linq;
 
@@ -18,7 +20,9 @@ namespace JR_API.Controllers
             _context = new JrDbContext();
         }
 
+
         //OBTENER INFORMACION DE LOS USUARIOS
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [Route("GetList")]
         [HttpGet]
         public async Task<IEnumerable<JR_DB.User>> GetList()
@@ -40,6 +44,7 @@ namespace JR_API.Controllers
         }
 
         //CREAR USUARIO
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [Route("Set")]
         [HttpPost]
         public async Task<JR_DB.GeneralResult> Set(JR_DB.User user)
@@ -72,6 +77,7 @@ namespace JR_API.Controllers
         }
 
         //OBTNER POR ID
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [Route("GetByID/{id}")]
         [HttpGet]
         public async Task<ActionResult> GetByID(int id)
@@ -94,6 +100,7 @@ namespace JR_API.Controllers
         }
 
         //EDITAR USUARIO 
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [Route("Edit/{id}")]
         [HttpPut]
         public async Task<ActionResult> Edit(int id, JR_DB.User user)
@@ -125,6 +132,7 @@ namespace JR_API.Controllers
         }
 
         //ELIMINAR USUARIO
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [Route("Delete/{id}")]
         [HttpDelete]
         public async Task<ActionResult> Delete(int id)

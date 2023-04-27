@@ -21,7 +21,18 @@ namespace JR_MVC.Controllers
         public async Task<IActionResult> ZonaReseñas()
         {
             int idUsuario = Convert.ToInt32(User.Claims.FirstOrDefault(s => s.Type == "idUser")?.Value);
-            IEnumerable<JR_DB.Reseña> reseñas = await Functions.APIServiceReseña.ReseñaGetList();
+
+            JR_DB.Tokens token = await Functions.APIServiceUser.Login(
+            new JR_DB.Tokens
+            {
+                token = "asdkhfalskdjfhas"
+            });
+
+            if (string.IsNullOrEmpty(token.token))
+            {
+                return NotFound();
+            }
+            IEnumerable<JR_DB.Reseña> reseñas = await Functions.APIServiceReseña.ReseñaGetList(token.token);
             List<JR_DB.Reseña> reseñas_ls = new List<JR_DB.Reseña>();
 
             foreach (var rs in reseñas)
@@ -49,7 +60,18 @@ namespace JR_MVC.Controllers
             int idUsuario = Convert.ToInt32(User.Claims.FirstOrDefault(s => s.Type == "idUser")?.Value);
             bool calificacionEncontrada = false;
             //validar calificacion
-            IEnumerable<JR_DB.Calificacion> calificaciones = await Functions.APIServiceCalificacion.CalificacionGetList();
+
+            JR_DB.Tokens token = await Functions.APIServiceUser.Login(
+            new JR_DB.Tokens
+            {
+                token = "asdkhfalskdjfhas"
+            });
+
+            if (string.IsNullOrEmpty(token.token))
+            {
+                return NotFound();
+            }
+            IEnumerable<JR_DB.Calificacion> calificaciones = await Functions.APIServiceCalificacion.CalificacionGetList(token.token);
             foreach (var cl in calificaciones)
             {
                 if (cl.IdUser == idUsuario)
@@ -63,7 +85,7 @@ namespace JR_MVC.Controllers
                                 reseña.IdUser = idUsuario;
                                 if (ModelState.IsValid)
                                 {
-                                    await Functions.APIServiceReseña.ReseñaSet(reseña);
+                                    await Functions.APIServiceReseña.ReseñaSet(reseña,token.token);
                                     return RedirectToAction(nameof(ZonaReseñas));
                                 }
                             }
@@ -103,7 +125,19 @@ namespace JR_MVC.Controllers
         [Authorize]
         public async Task<IActionResult> EditReseña(int id)
         {
-            JR_DB.Reseña reseña = await Functions.APIServiceReseña.GetReseñaByID(id);
+
+            JR_DB.Tokens token = await Functions.APIServiceUser.Login(
+            new JR_DB.Tokens
+            {
+                token = "asdkhfalskdjfhas"
+            });
+
+            if (string.IsNullOrEmpty(token.token))
+            {
+                return NotFound();
+            }
+
+            JR_DB.Reseña reseña = await Functions.APIServiceReseña.GetReseñaByID(id, token.token);
 
             return View(reseña);
         }
@@ -120,7 +154,19 @@ namespace JR_MVC.Controllers
 
             if (ModelState.IsValid)
             {
-                await Functions.APIServiceReseña.ReseñaEdit(reseña, id);
+
+                JR_DB.Tokens token = await Functions.APIServiceUser.Login(
+                new JR_DB.Tokens
+                {
+                    token = "asdkhfalskdjfhas"
+                });
+
+                if (string.IsNullOrEmpty(token.token))
+                {
+                    return NotFound();
+                }
+
+                await Functions.APIServiceReseña.ReseñaEdit(reseña, id, token.token);
                 return RedirectToAction(nameof(ZonaReseñas));
 
             }
@@ -132,7 +178,18 @@ namespace JR_MVC.Controllers
         public async Task<IActionResult> DeleteReseña(int id)
         {
 
-            JR_DB.Reseña reseña = await Functions.APIServiceReseña.GetReseñaByID(id);
+            JR_DB.Tokens token = await Functions.APIServiceUser.Login(
+            new JR_DB.Tokens
+            {
+                token = "asdkhfalskdjfhas"
+            });
+
+            if (string.IsNullOrEmpty(token.token))
+            {
+                return NotFound();
+            }
+
+            JR_DB.Reseña reseña = await Functions.APIServiceReseña.GetReseñaByID(id,token.token);
 
 
             return View(reseña);
@@ -144,9 +201,21 @@ namespace JR_MVC.Controllers
         [Authorize]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+
+            JR_DB.Tokens token = await Functions.APIServiceUser.Login(
+            new JR_DB.Tokens
+            {
+                token = "asdkhfalskdjfhas"
+            });
+
+            if (string.IsNullOrEmpty(token.token))
+            {
+                return NotFound();
+            }
+
             if (id != 0)
             {
-                await Functions.APIServiceReseña.ReseñaDelete(id);
+                await Functions.APIServiceReseña.ReseñaDelete(id, token.token);
             }
 
 
