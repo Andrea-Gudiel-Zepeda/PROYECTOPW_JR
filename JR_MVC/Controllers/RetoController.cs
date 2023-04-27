@@ -50,7 +50,7 @@ namespace JR_MVC.Controllers
             return View(retoaleatorio);
         }
 
-        [HttpPost]
+        [HttpGet]
         [Authorize]
         public async Task<IActionResult> ObtenerReto(string reto)
         {
