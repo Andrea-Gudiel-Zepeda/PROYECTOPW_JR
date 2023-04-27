@@ -2,7 +2,7 @@
 {
     public class RetosAleatorios
     {
-        static public string RetosListado(int i)
+         public  string RetosListado(int i)
         {
             List<string> retos = new List<string>();
             retos.Add("Una novela gráfica o un manga");
@@ -39,7 +39,7 @@
             return (retos[i]);
         }
 
-        static public string TuReto()
+         public string TuReto()
         {
             
             int min = 0;

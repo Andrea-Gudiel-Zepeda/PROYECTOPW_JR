@@ -1,4 +1,5 @@
 ﻿using JR_MVC.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections;
 using System.Diagnostics;
@@ -14,158 +15,114 @@ namespace JR_MVC.Controllers
             _logger = logger;
         }
 
+        //Obtener 
         [HttpGet]
-        public IActionResult Pagina_Principal()
+        [Authorize]
+        public async Task<IActionResult> ShowReto()
         {
-            return View();
-        }
+            int idUsuario = Convert.ToInt32(User.Claims.FirstOrDefault(s => s.Type == "idUser")?.Value);
+            IEnumerable<JR_DB.Reto> retos = await Functions.APIServiceReto.RetoGetList();
+            List<JR_DB.Reto> retos_ls = new List<JR_DB.Reto>();
 
-        [HttpPost]
-        public IActionResult Pagina_Principal(IFormCollection collection)
-        {
-            return View();
-        }
-
-        [HttpGet]
-        public IActionResult SingIn()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        public IActionResult SingIn(IFormCollection collection)
-        {
-            ViewBag.Id = "1";
-            return View();
-        }
-
-        [HttpGet]
-        public IActionResult SingUp()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        public IActionResult SingUp(IFormCollection collection)
-        {
-               
-            return View();
-        }
-
-
-        public IActionResult Recoverpw()
-        {
-            return View();
-        }
-
-        public IActionResult User_Profile()
-        {
-            return View();
-        }
-
-        public IActionResult error404()
-        {
-            return View();
-        }
-
-        public IActionResult AcercaDe()
-        {
-            return View();
-        }
-
-        public IActionResult Read_List()
-        {
-            return View();
-        }
-
-        public IActionResult Buy_List()
-        {
-            return View();
-        }
-
-        public IActionResult ToDo_List()
-        {
-            return View();
-        }
-
-        public IActionResult CreateBook_Read()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        public IActionResult CreateBook_Read(IFormCollection collection)
-        {
-            int id = Convert.ToInt32(ViewBag.Id);
-            JrDbContext _jrContext = new JrDbContext();
-            JR_MVC.Models.Book book = new JR_MVC.Models.Book
+            foreach (var rt in retos)
             {
-                IdBook = 0,
-                NameBook = collection["NombreLibro"],
-                AuthorBook = collection["NombreAutor"],
-                //BookPublish = collection["publicacion"],
-                DateBook = Convert.ToDateTime(collection["FechaLeido"]),
-                IdCategorie = 1,
-                IdUser = id
-            };
-
-            //_jrContext.Books.Add(book);
-            //_jrContext.SaveChanges();
-
-            return View();
+                if (rt.IdUser == idUsuario)
+                {
+                    retos_ls.Add(rt);
+                }
+            }
+            return View(retos_ls);
         }
 
-        public IActionResult CreateBook_Buy()
-        {
-            return View();
-        }
 
         [HttpGet]
-        public IActionResult CreateBook()
+        [Authorize]
+        //Obtener reto aleatorio
+        public async Task<IActionResult> ObtenerReto()
         {
-            return View();
+            int idUsuario = Convert.ToInt32(User.Claims.FirstOrDefault(s => s.Type == "idUser")?.Value);
+            RetosAleatorios metodoretos = new RetosAleatorios();
+            string reto = metodoretos.TuReto();
+            JR_DB.Reto retoaleatorio = new JR_DB.Reto();
+            retoaleatorio.IdReto = 0;
+            retoaleatorio.NombreReto = reto;
+            retoaleatorio.IdUser = idUsuario;
+            return View(retoaleatorio);
         }
 
         [HttpPost]
-        public IActionResult CreateBook(Book book)
+        [Authorize]
+        public async Task<IActionResult> ObtenerReto(string reto)
         {
-            return View();
+            int idUsuario = Convert.ToInt32(User.Claims.FirstOrDefault(s => s.Type == "idUser")?.Value);
+            //validar calificacion
+           /* reto.IdUser = idUsuario;
+            reto.DateStart = Convert.ToDateTime(DateTime.Now.Date);
+            reto.Status = "En Proceso";
+
+                 if (ModelState.IsValid)
+                 {
+                     await Functions.APIServiceReto.RetoSet(reto);
+                    
+                 }*/
+            
+            return RedirectToAction(nameof(ShowReto));
         }
 
-        public IActionResult CreateBook_ToDo()
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> EditReto(int id)
         {
-            return View();
+            JR_DB.Reto reto = await Functions.APIServiceReto.GetRetoByID(id);
+
+            return View(reto);
         }
 
-        public IActionResult UpdateBook()
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> EditReseña(int id, [Bind("IdReto,NombreReto,Status,DateStart,DateEnd,IdUser")] JR_DB.Reto reto)
         {
-            return View();
+            int idUsuario = Convert.ToInt32(User.Claims.FirstOrDefault(s => s.Type == "idUser")?.Value);
+            if (id != reto.IdReto)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                await Functions.APIServiceReto.RetoEdit(reto, id);
+                return RedirectToAction(nameof(ShowReto));
+
+            }
+            return View(reto);
         }
 
-        public IActionResult ZonaReseñas()
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> DeleteReto(int id)
         {
-            return View();
+
+            JR_DB.Reto reto = await Functions.APIServiceReto.GetRetoByID(id);
+
+
+            return View(reto);
         }
 
-        public IActionResult CreateReseña()
+
+        [HttpPost, ActionName("DeleteReto")]
+        [ValidateAntiForgeryToken]
+        [Authorize]
+        public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            return View();
+            if (id != 0)
+            {
+                await Functions.APIServiceReto.RetoDelete(id);
+            }
+
+
+            return RedirectToAction(nameof(ShowReto));
         }
 
-        public IActionResult UpdateReseña()
-        {
-            return View();
-        }
-
-        public IActionResult Terms_Service()
-        {
-            return View();
-        }
-
-        public IActionResult Privacy_Policy()
-        {
-            return View();
-        }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

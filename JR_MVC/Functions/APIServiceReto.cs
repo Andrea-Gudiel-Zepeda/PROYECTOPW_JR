@@ -69,11 +69,11 @@ namespace JR_MVC.Functions
         }
 
         //METODOS DE LA CLASE USUARIO
-        public static async System.Threading.Tasks.Task<IEnumerable<JR_DB.User>> UserGetList(){
-            var response = await GetListMethod("User/GetList");
+        public static async System.Threading.Tasks.Task<IEnumerable<JR_DB.Reto>> RetoGetList(){
+            var response = await GetListMethod("Reto/GetList");
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
-                return JsonConvert.DeserializeObject<IEnumerable<JR_DB.User>>(await response.Content.ReadAsStringAsync());
+                return JsonConvert.DeserializeObject<IEnumerable<JR_DB.Reto>>(await response.Content.ReadAsStringAsync());
             }
             else
             {
@@ -81,10 +81,10 @@ namespace JR_MVC.Functions
             }
         }
 
-        public static async System.Threading.Tasks.Task<JR_DB.GeneralResult> UserSet(JR_MVC.Models.User object_to_serialize)
+        public static async System.Threading.Tasks.Task<JR_DB.GeneralResult> RetoSet(JR_DB.Reto object_to_serialize)
         {
             var json_ = Newtonsoft.Json.JsonConvert.SerializeObject(object_to_serialize);
-            var response = await SetMethod("User/Set", json_);//httpClient.PostAsync(baseurl + "User/Set", content);
+            var response = await SetMethod("Reto/Set", json_);//httpClient.PostAsync(baseurl + "User/Set", content);
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
                 return JsonConvert.DeserializeObject<JR_DB.GeneralResult>(await response.Content.ReadAsStringAsync());
@@ -95,12 +95,12 @@ namespace JR_MVC.Functions
             }
         }
 
-        public static async System.Threading.Tasks.Task<JR_DB.User> GetUserByID(int id)
+        public static async System.Threading.Tasks.Task<JR_DB.Reto> GetRetoByID(int id)
         {
-            var response = await GetByIDMethod("User/GetByID", id);
+            var response = await GetByIDMethod("Reto/GetByID", id);
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
-                return JsonConvert.DeserializeObject<JR_DB.User>(await response.Content.ReadAsStringAsync());
+                return JsonConvert.DeserializeObject<JR_DB.Reto>(await response.Content.ReadAsStringAsync());
             }
             else
             {
@@ -108,10 +108,10 @@ namespace JR_MVC.Functions
             }
         }
 
-        public static async System.Threading.Tasks.Task<JR_DB.GeneralResult> UserEdit(JR_DB.User object_to_serialize, int id)
+        public static async System.Threading.Tasks.Task<JR_DB.GeneralResult> RetoEdit(JR_DB.Reto object_to_serialize, int id)
         {
             var json_ = Newtonsoft.Json.JsonConvert.SerializeObject(object_to_serialize);
-            var response = await EditMethod("User/Edit", id, json_);
+            var response = await EditMethod("Reto/Edit", id, json_);
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
                 return JsonConvert.DeserializeObject<JR_DB.GeneralResult>(await response.Content.ReadAsStringAsync());
@@ -122,10 +122,10 @@ namespace JR_MVC.Functions
             }
         }
 
-        public static async System.Threading.Tasks.Task<JR_DB.GeneralResult> UserDelete(int id)
+        public static async System.Threading.Tasks.Task<JR_DB.GeneralResult> RetoDelete(int id)
         {
             //var json_ = Newtonsoft.Json.JsonConvert.SerializeObject(object_to_serialize);
-            var response = await DeleteMethod("User/Delete", id);//httpClient.PostAsync(baseurl + "Movies/Set", content);
+            var response = await DeleteMethod("Reto/Delete", id);//httpClient.PostAsync(baseurl + "Movies/Set", content);
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
                 return JsonConvert.DeserializeObject<JR_DB.GeneralResult>(await response.Content.ReadAsStringAsync());

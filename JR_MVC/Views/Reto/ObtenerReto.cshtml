@@ -35,15 +35,17 @@
                                       <div class="row">
                                         <div class="col-lg-4 banner-item">
                                             <p class="mb-4"> Aceptar el reto </p>
-                                            <div class="d-flex justify-content-center">
-                                                <a asp-action="CreateReto" class="btn btn-primary">Aceptar</a>
-                                            </div>
+                                            <form asp-action="CreateReto">
+                                                <div class="d-flex justify-content-center">
+                                                    <a asp-action="ObtenerReto" asp-route-data="@Model.NombreReto" class="btn btn-primary">Aceptar</a>
+                                                </div>
+                                            </form>
                                         </div>
                                         <div class="col-lg-4 banner-item">
                                             <p class="mb-4"> Cancelar el reto </p>
-                                            <form asp-action="ShowRetos">
+                                            <form asp-action="ShowReto">
                                                <div class="d-flex justify-content-center">
-                                                    <a asp-action="ShowRetos" class="btn btn-primary">Cancelar</a>  
+                                                    <a asp-action="ShowReto" class="btn btn-primary">Cancelar</a>  
                                                </div>
                                              </form>
                                         </div>

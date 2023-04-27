@@ -92,8 +92,8 @@ namespace JR_MVC.Controllers
         }
 
         
-        [Authorize]
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> EditCalificacion(int id)
         {
             JR_DB.Calificacion calificacion = await Functions.APIServiceCalificacion.GetCalificacionByID(id);
@@ -101,8 +101,8 @@ namespace JR_MVC.Controllers
             return View(calificacion);
         }
 
-        [Authorize]
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> EditCalificacion(int id, [Bind("IdCalificacion, LimiteInferior, LimiteSuperior, IdUser")] JR_DB.Calificacion calificacion)
         {
             int idUsuario = Convert.ToInt32(User.Claims.FirstOrDefault(s => s.Type == "idUser")?.Value);
